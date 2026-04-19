@@ -1,4 +1,0 @@
----
-// Redirect to /en or /es based on Accept-Language
-return Astro.redirect((Astro.request.headers.get('accept-language') || '').includes('es') ? '/es' : '/en')
----
