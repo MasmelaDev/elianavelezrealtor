@@ -1,0 +1,170 @@
+---
+import BaseLayout from '../../components/layout/BaseLayout.astro'
+import PublicLayout from '../../components/layout/PublicLayout.astro'
+import HeroSection from '../../components/sections/HeroSection.astro'
+import StatsSection from '../../components/sections/StatsSection.astro'
+import WhyChooseSection from '../../components/sections/WhyChooseSection.astro'
+import AboutSection from '../../components/sections/AboutSection.astro'
+import ServicesSection from '../../components/sections/ServicesSection.astro'
+import BlogPreview from '../../components/sections/BlogPreview.astro'
+import { getLangFromUrl, useTranslations } from '../../i18n/utils'
+import { db } from '../../lib/db'
+import { pageContent } from '../../db/schema'
+import { blogPosts } from '../../db/schema'
+import { eq } from 'drizzle-orm'
+import FeaturedProperties from '../../components/sections/FeaturedProperties'
+import ContactForm from '../../components/sections/ContactForm'
+import TestimonialsContent from '../../components/sections/TestimonialsContent'
+import { ZoneMap } from '../../components/sections/ZoneMap'
+import AppointmentForm from '../../components/sections/AppointmentForm'
+import { properties } from '../../db/schema'
+
+const lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+
+const contentRows = await db.select().from(pageContent)
+const content: Record<string, { en: string; es: string }> = {}
+contentRows.forEach((r) => { content[r.key] = { en: r.valueEn, es: r.valueEs } })
+
+const heroTitle = content['hero.title']?.es ?? 'Encuentra tu Hogar Ideal'
+const heroSubtitle = content['hero.subtitle']?.es ?? 'Transformamos tu visión en realidad. Tu guía experta en bienes raíces.'
+const heroTagline = content['hero.tagline']?.es ?? t('hero.tagline')
+const heroRole = content['hero.role']?.es ?? t('hero.role')
+const heroCtaPrimary = content['hero.cta.primary']?.es ?? t('hero.cta.primary')
+const heroCtaSecondary = content['hero.cta.secondary']?.es ?? t('hero.cta.secondary')
+const heroBadgeTitle = content['hero.badgeTitle']?.es ?? t('hero.badgeTitle')
+const heroBadgeDesc = content['hero.badgeDesc']?.es ?? t('hero.badgeDesc')
+const aboutTitle = content['about.title']?.es ?? t('about.title')
+const aboutBody = content['about.body']?.es ?? 'Soy Eliana Velez, una apasionada profesional en bienes raíces con experiencia comprobada ayudando a familias e inversores a encontrar su lugar perfecto. Mi compromiso es brindarte un servicio transparente, ágil y totalmente personalizado para asegurar el éxito absoluto de tu inversión y tranquilidad.'
+const aboutBadge = content['about.badge']?.es ?? t('about.badge')
+const aboutCta = content['about.cta']?.es ?? t('about.cta')
+const aboutHappyClients = content['about.happyClients']?.es ?? t('about.happyClients')
+const servicesTitle = content['services.title']?.es ?? t('services.title')
+const servicesBody = content['services.body']?.es ?? 'Ya sea que busques el hogar de tus sueños, desees vender tu propiedad al mejor precio del mercado competitivo actual, o busques una propiedad rentable para arrendar, te ofrezco una asesoría integral y dedicada en cada paso del camino.'
+const servicesBadge = content['services.badge']?.es ?? t('services.badge')
+const servicesBuyTitle = content['services.buy.title']?.es ?? t('services.buy.title')
+const servicesBuyDesc = content['services.buy.desc']?.es ?? t('services.buy.desc')
+const servicesSellTitle = content['services.sell.title']?.es ?? t('services.sell.title')
+const servicesSellDesc = content['services.sell.desc']?.es ?? t('services.sell.desc')
+const servicesRentTitle = content['services.rent.title']?.es ?? t('services.rent.title')
+const servicesRentDesc = content['services.rent.desc']?.es ?? t('services.rent.desc')
+const whyTitle = content['why.title']?.es ?? t('why.title')
+const whySubtitle = content['why.subtitle']?.es ?? t('why.subtitle')
+const whyItem1Title = content['why.item1.title']?.es ?? t('why.item1.title')
+const whyItem1Desc = content['why.item1.desc']?.es ?? t('why.item1.desc')
+const whyItem2Title = content['why.item2.title']?.es ?? t('why.item2.title')
+const whyItem2Desc = content['why.item2.desc']?.es ?? t('why.item2.desc')
+const whyItem3Title = content['why.item3.title']?.es ?? t('why.item3.title')
+const whyItem3Desc = content['why.item3.desc']?.es ?? t('why.item3.desc')
+const contactTitle = content['contact.title']?.es ?? t('contact.title')
+const statsYears = content['stats.years']?.es ?? t('stats.years')
+const statsYearsLabel = content['stats.yearsLabel']?.es ?? t('stats.yearsLabel')
+const statsClients = content['stats.clients']?.es ?? t('stats.clients')
+const statsClientsLabel = content['stats.clientsLabel']?.es ?? t('stats.clientsLabel')
+const statsDeals = content['stats.deals']?.es ?? t('stats.deals')
+const statsDealsLabel = content['stats.dealsLabel']?.es ?? t('stats.dealsLabel')
+const aboutBadgeFloatingTitle = content['about.badgeFloatingTitle']?.es ?? 'Certificada'
+const aboutBadgeFloatingDesc = content['about.badgeFloatingDesc']?.es ?? 'Top Realtor'
+const testimonialsTitle = content['testimonials.title']?.es ?? t('testimonials.title')
+const testimonialsSubtitle = content['testimonials.subtitle']?.es ?? t('testimonials.subtitle')
+
+const heroImage = content['image.hero']?.es ?? '/images/elianafull.jpg'
+const aboutImage = content['image.about']?.es ?? '/images/elianafull.jpg'
+const serviceBuyImage = content['image.service.buy']?.es ?? '/images/hero-bg.png'
+const serviceSellImage = content['image.service.sell']?.es ?? '/images/hero-2.png'
+const serviceRentImage = content['image.service.rent']?.es ?? '/images/hero-3.png'
+const iconBuy = (content['icon.service.buy']?.es ?? '').trim() || undefined
+const iconSell = (content['icon.service.sell']?.es ?? '').trim() || undefined
+const iconRent = (content['icon.service.rent']?.es ?? '').trim() || undefined
+
+const buildTestimonials = (langKey: 'es' | 'en') => [
+  { id: '1', name: content['testimonials.1.name']?.[langKey] ?? '', role: content['testimonials.1.role']?.[langKey] ?? '', content: content['testimonials.1.content']?.[langKey] ?? '', image: content['testimonials.1.image']?.es ?? '', rating: Math.min(5, Math.max(1, parseInt(content['testimonials.1.rating']?.es ?? '5', 10) || 5)) },
+  { id: '2', name: content['testimonials.2.name']?.[langKey] ?? '', role: content['testimonials.2.role']?.[langKey] ?? '', content: content['testimonials.2.content']?.[langKey] ?? '', image: content['testimonials.2.image']?.es ?? '', rating: Math.min(5, Math.max(1, parseInt(content['testimonials.2.rating']?.es ?? '5', 10) || 5)) },
+  { id: '3', name: content['testimonials.3.name']?.[langKey] ?? '', role: content['testimonials.3.role']?.[langKey] ?? '', content: content['testimonials.3.content']?.[langKey] ?? '', image: content['testimonials.3.image']?.es ?? '', rating: Math.min(5, Math.max(1, parseInt(content['testimonials.3.rating']?.es ?? '5', 10) || 5)) },
+]
+const esTestimonialsRaw = buildTestimonials('es')
+const esTestimonials = esTestimonialsRaw.some(t => t.name || t.content) ? esTestimonialsRaw : [
+  { id: '1', name: 'Sarah Jenkins', role: 'Compradora', content: '¡Eliana fue increíble! Nos guió en cada paso para comprar nuestra primera casa.', image: '/images/sarah.jpg', rating: 5 },
+  { id: '2', name: 'Michael Chen', role: 'Inversor', content: 'He trabajado con muchos realtors, pero el nivel de profesionalismo aquí es inigualable.', image: '/images/michael.jpg', rating: 5 },
+  { id: '3', name: 'Elena Rodriguez', role: 'Vendedora', content: 'Vender una casa puede ser estresante, pero ella lo hizo muy sencillo. ¡Mi casa se vendió por encima del precio en una semana!', image: '/images/elena.jpg', rating: 5 },
+]
+
+const posts = await db.select({
+  id: blogPosts.id,
+  slug: blogPosts.slug,
+  titleEn: blogPosts.titleEn,
+  titleEs: blogPosts.titleEs,
+  excerptEn: blogPosts.excerptEn,
+  excerptEs: blogPosts.excerptEs,
+  coverImage: blogPosts.coverImage,
+}).from(blogPosts).where(eq(blogPosts.published, true)).limit(3)
+
+const propsList = await db.select({
+  id: properties.id,
+  titleEn: properties.titleEn,
+  titleEs: properties.titleEs,
+  price: properties.price,
+  lat: properties.lat,
+  lng: properties.lng
+}).from(properties).where(eq(properties.status, 'available'))
+---
+<BaseLayout title="Inicio" description={heroSubtitle} lang="es">
+  <PublicLayout lang="es" t={t} transparentNav={true} editorMode={Astro.url.searchParams.get('editor') === 'true'}>
+    <HeroSection
+      lang="es"
+      t={t}
+      title={heroTitle}
+      subtitle={heroSubtitle}
+      heroImage={heroImage}
+      tagline={heroTagline}
+      role={heroRole}
+      primaryCta={heroCtaPrimary}
+      secondaryCta={heroCtaSecondary}
+      badgeTitle={heroBadgeTitle}
+      badgeDesc={heroBadgeDesc}
+    />
+    <StatsSection t={t} years={statsYears} yearsLabel={statsYearsLabel} clients={statsClients} clientsLabel={statsClientsLabel} deals={statsDeals} dealsLabel={statsDealsLabel} />
+    <FeaturedProperties
+      client:load
+      lang="es"
+      featuredTitle={t('properties.featuredTitle')}
+      viewAll={t('properties.viewAll')}
+      emptyFeatured={t('properties.emptyFeatured')}
+      typeSale={t('filter.type.sale')}
+      typeRent={t('filter.type.rent')}
+    />
+    <WhyChooseSection
+      t={t}
+      whyTitle={whyTitle}
+      whySubtitle={whySubtitle}
+      item1Title={whyItem1Title}
+      item1Desc={whyItem1Desc}
+      item2Title={whyItem2Title}
+      item2Desc={whyItem2Desc}
+      item3Title={whyItem3Title}
+      item3Desc={whyItem3Desc}
+    />
+    <AboutSection lang="es" t={t} title={aboutTitle} body={aboutBody} badge={aboutBadge} cta={aboutCta} happyClients={aboutHappyClients} badgeFloatingTitle={aboutBadgeFloatingTitle} badgeFloatingDesc={aboutBadgeFloatingDesc} cardImage={aboutImage} />
+    <ServicesSection lang="es" t={t} title={servicesTitle} badge={servicesBadge} body={servicesBody} serviceImages={[serviceBuyImage, serviceSellImage, serviceRentImage]} buyTitle={servicesBuyTitle} buyDesc={servicesBuyDesc} sellTitle={servicesSellTitle} sellDesc={servicesSellDesc} rentTitle={servicesRentTitle} rentDesc={servicesRentDesc} iconBuy={iconBuy} iconSell={iconSell} iconRent={iconRent} />
+    <TestimonialsContent
+      client:load
+      title={testimonialsTitle}
+      subtitle={testimonialsSubtitle}
+      testimonials={esTestimonials}
+    />
+    <section class="map-section relative bg-surface-muted py-12 sm:py-16 md:py-20 lg:py-28 overflow-hidden" id="map">
+      <div class="absolute inset-0 opacity-[0.04] pointer-events-none hidden lg:block" aria-hidden="true">
+        <img src="/images/hero-bg.png" alt="" class="h-full w-full object-cover" />
+      </div>
+      <div class="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <h2 class="font-serif text-2xl font-semibold text-on-surface sm:text-3xl md:text-4xl">{t('properties.mapTitle')}</h2>
+        <div class="mt-4 min-h-[320px] overflow-hidden rounded-2xl border border-gray-200/80 bg-surface sm:mt-6 sm:min-h-[400px] md:mt-8 shadow-xl">
+          <ZoneMap client:only="react" properties={propsList} lang="es" />
+        </div>
+      </div>
+    </section>
+    <BlogPreview lang="es" t={t} posts={posts} />
+    <ContactForm client:load lang="es" contactTitle={contactTitle} whatsappNumber={content['contact.whatsapp']?.es} />
+    <AppointmentForm client:load lang="es" />
+  </PublicLayout>
+</BaseLayout>

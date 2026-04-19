@@ -1,0 +1,30 @@
+---
+import { getRelativeLocaleUrl } from '../../i18n/utils'
+import type { Lang } from '../../i18n/ui'
+import type { UIKey } from '../../i18n/ui'
+import { BlogContent } from './BlogContent'
+
+interface Props {
+  lang: Lang
+  t: (key: UIKey) => string
+  posts: Array<{ id: string; slug: string; titleEn: string; titleEs: string; excerptEn: string | null; excerptEs: string | null; coverImage: string | null }>
+}
+const { lang, t, posts } = Astro.props
+
+const formattedPosts = posts.map((p) => ({
+  slug: p.slug,
+  title: lang === 'es' ? p.titleEs : p.titleEn,
+  excerpt: lang === 'es' ? (p.excerptEs ?? '') : (p.excerptEn ?? ''),
+  coverImage: p.coverImage,
+  href: getRelativeLocaleUrl(lang, `/blog/${p.slug}`)
+}))
+---
+
+<BlogContent
+  client:visible
+  title={t('blog.title')}
+  emptyText={t('blog.empty')}
+  viewAllText={t('blog.viewAll')}
+  viewAllHref={getRelativeLocaleUrl(lang, '/blog')}
+  posts={formattedPosts}
+/>

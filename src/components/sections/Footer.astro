@@ -1,0 +1,45 @@
+---
+import { type Lang, getRelativeLocaleUrl } from '../../i18n/utils'
+import type { UIKey } from '../../i18n/ui'
+interface Props {
+  lang: Lang
+  t: (key: UIKey) => string
+}
+const { lang, t } = Astro.props
+---
+<footer class="relative overflow-hidden border-t-4 border-accent bg-surface-dark py-12 text-on-surface-dark sm:py-16">
+  <div class="absolute inset-0 bg-[url('/images/pattern-dark.svg')] opacity-[0.02] pointer-events-none" aria-hidden="true" />
+  <div class="absolute right-0 bottom-0 w-64 opacity-5 pointer-events-none" aria-hidden="true">
+    <img src="/images/elianafull.jpg" alt="" class="rounded-tl-3xl object-cover h-48 w-full" />
+  </div>
+  <div class="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="grid gap-8 sm:gap-10 md:grid-cols-2 lg:grid-cols-4">
+      <div class="lg:col-span-2">
+        <a href={getRelativeLocaleUrl(lang, '/')} class="inline-block">
+          <img src="/images/logo.png" alt="Eliana Velez REALTOR®" class="footer-logo h-8 w-auto max-w-[140px] object-contain brightness-0 invert" width="140" height="32" />
+          <span class="footer-brand-fallback hidden font-serif text-3xl font-bold tracking-tight text-white">Eliana Velez <span class="text-accent text-sm uppercase tracking-widest block mt-1 font-sans">Realtor®</span></span>
+        </a>
+        <p class="mt-4 max-w-sm text-sm text-on-surface-dark-muted">
+          © {new Date().getFullYear()} Eliana Velez. {t('nav.home')}.
+        </p>
+      </div>
+      <nav class="flex flex-col gap-3">
+        <span class="text-sm font-bold uppercase tracking-widest text-accent mb-2">Links</span>
+        <a href={getRelativeLocaleUrl(lang, '/properties')} class="text-on-surface-dark-muted transition-colors hover:text-white font-medium">{t('nav.properties')}</a>
+        <a href={getRelativeLocaleUrl(lang, '/blog')} class="text-on-surface-dark-muted transition-colors hover:text-white font-medium">{t('nav.blog')}</a>
+        <a href={getRelativeLocaleUrl(lang, '/#contact')} class="text-on-surface-dark-muted transition-colors hover:text-white font-medium">{t('nav.contact')}</a>
+        <a href={getRelativeLocaleUrl(lang, '/#appointment')} class="text-on-surface-dark-muted transition-colors hover:text-white font-medium">{t('nav.book')}</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const footerLogo = document.querySelector('.footer-logo')
+  if (footerLogo) {
+    footerLogo.addEventListener('error', () => {
+      footerLogo.classList.add('hidden')
+      document.querySelector('.footer-brand-fallback')?.classList.remove('hidden')
+    })
+  }
+</script>

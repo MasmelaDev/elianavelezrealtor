@@ -1,0 +1,36 @@
+---
+import type { UIKey } from '../../i18n/ui'
+import { StatsContent } from './StatsContent'
+interface Props {
+  t: (key: UIKey) => string
+  years?: string
+  yearsLabel?: string
+  clients?: string
+  clientsLabel?: string
+  deals?: string
+  dealsLabel?: string
+}
+const {
+  t,
+  years = t('stats.years'),
+  yearsLabel = t('stats.yearsLabel'),
+  clients = t('stats.clients'),
+  clientsLabel = t('stats.clientsLabel'),
+  deals = t('stats.deals'),
+  dealsLabel = t('stats.dealsLabel'),
+} = Astro.props
+---
+<section class="stats-section relative bg-primary py-12 sm:py-16 md:py-20 overflow-hidden" aria-label={t('stats.ariaLabel')}>
+  <div class="absolute inset-0 opacity-10" aria-hidden="true">
+    <img src="/images/hero-bg.png" alt="" class="h-full w-full object-cover" />
+  </div>
+  <StatsContent
+    client:visible
+    years={years}
+    yearsLabel={yearsLabel}
+    clients={clients}
+    clientsLabel={clientsLabel}
+    deals={deals}
+    dealsLabel={dealsLabel}
+  />
+</section>

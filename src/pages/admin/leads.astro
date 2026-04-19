@@ -1,0 +1,14 @@
+---
+import AdminLayout from '../../components/admin/AdminLayout.astro'
+import { db } from '../../lib/db'
+import { leads } from '../../db/schema'
+import { desc } from 'drizzle-orm'
+import { LeadsTable } from '../../components/admin/LeadsTable'
+const list = await db.select().from(leads).orderBy(desc(leads.createdAt))
+---
+<AdminLayout title="Leads">
+  <h1 class="text-2xl font-semibold text-gray-900">Leads</h1>
+  <div class="mt-4">
+    <LeadsTable client:load initialData={list as any} />
+  </div>
+</AdminLayout>

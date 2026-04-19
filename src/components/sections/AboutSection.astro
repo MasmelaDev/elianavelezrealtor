@@ -1,0 +1,36 @@
+---
+import type { Lang } from '../../i18n/ui'
+import type { UIKey } from '../../i18n/ui'
+import { AboutContent } from './AboutContent'
+
+interface Props {
+  lang: Lang
+  t: (key: UIKey) => string
+  title?: string
+  body: string
+  badge?: string
+  cta?: string
+  happyClients?: string
+  badgeFloatingTitle?: string
+  badgeFloatingDesc?: string
+  cardImage?: string
+}
+const { t, title = t('about.title'), body, badge = t('about.badge'), cta = t('about.cta'), happyClients = t('about.happyClients'), badgeFloatingTitle = 'Certified', badgeFloatingDesc = 'Top Realtor', cardImage = '/images/elianafull.jpg' } = Astro.props
+---
+<section class="relative overflow-hidden bg-surface-gray py-16 sm:py-24 md:py-32" id="about">
+  <div class="absolute inset-0 opacity-[0.03] pointer-events-none" aria-hidden="true">
+    <img src="/images/hero-bg.png" alt="" class="h-full w-full object-cover" />
+  </div>
+  <div class="absolute -left-[20%] top-0 h-[600px] w-[600px] rounded-full bg-white/40 blur-3xl pointer-events-none sm:h-[800px] sm:w-[800px]" aria-hidden="true"></div>
+  <AboutContent
+    client:visible
+    title={title}
+    body={body}
+    cardImage={cardImage}
+    badgeText={badge}
+    ctaText={cta}
+    happyClientsText={happyClients}
+    badgeFloatingTitle={badgeFloatingTitle}
+    badgeFloatingDesc={badgeFloatingDesc}
+  />
+</section>

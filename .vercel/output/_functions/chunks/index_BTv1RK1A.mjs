@@ -1,0 +1,53 @@
+import { z } from 'zod';
+
+const LeadSchema = z.object({
+  name: z.string().min(2).max(100),
+  email: z.string().email(),
+  phone: z.string().optional(),
+  message: z.string().max(1e3).optional(),
+  source: z.enum(["contact", "property", "appointment"]),
+  propertyId: z.string().uuid().optional()
+});
+const AppointmentSchema = z.object({
+  slotId: z.string().uuid(),
+  name: z.string().min(2).max(100),
+  email: z.string().email(),
+  phone: z.string().optional(),
+  message: z.string().max(500).optional()
+});
+const PropertySchema = z.object({
+  titleEn: z.string().min(3).max(255),
+  titleEs: z.string().min(3).max(255),
+  descriptionEn: z.string().optional(),
+  descriptionEs: z.string().optional(),
+  price: z.number().positive(),
+  zone: z.string().min(2).max(100),
+  type: z.enum(["sale", "rent"]),
+  status: z.enum(["available", "sold", "rented"]).default("available"),
+  bedrooms: z.number().int().min(0).optional(),
+  bathrooms: z.number().int().min(0).optional(),
+  areaSqft: z.number().positive().optional(),
+  address: z.string().optional(),
+  lat: z.number().optional(),
+  lng: z.number().optional(),
+  images: z.array(z.string().url()).default([]),
+  features: z.array(z.string()).default([]),
+  featured: z.boolean().default(false)
+});
+const BlogPostSchema = z.object({
+  slug: z.string().regex(/^[a-z0-9-]+$/),
+  titleEn: z.string().min(3).max(255),
+  titleEs: z.string().min(3).max(255),
+  contentEn: z.string().optional(),
+  contentEs: z.string().optional(),
+  excerptEn: z.string().max(500).optional(),
+  excerptEs: z.string().max(500).optional(),
+  coverImage: z.string().url().optional(),
+  published: z.boolean().default(false)
+});
+const LoginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8)
+});
+
+export { AppointmentSchema as A, BlogPostSchema as B, LoginSchema as L, PropertySchema as P, LeadSchema as a };

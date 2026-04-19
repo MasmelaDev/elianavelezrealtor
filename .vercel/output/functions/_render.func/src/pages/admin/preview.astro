@@ -1,0 +1,15 @@
+---
+import AdminLayout from '../../components/admin/AdminLayout.astro'
+import { db } from '../../lib/db'
+import { pageContent } from '../../db/schema'
+import { LiveEditor } from '../../components/admin/LiveEditor'
+const list = await db.select().from(pageContent)
+---
+<AdminLayout title="Editor Visual">
+  <LiveEditor client:load initialData={list as any} />
+</AdminLayout>
+
+<style>
+  /* Remove default padding from admin layout main for full-bleed editor */
+  main { padding: 0 !important; max-width: 100% !important; }
+</style>

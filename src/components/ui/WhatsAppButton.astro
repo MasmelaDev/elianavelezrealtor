@@ -1,0 +1,31 @@
+---
+import { db } from '../../lib/db'
+import { pageContent } from '../../db/schema'
+import { eq } from 'drizzle-orm'
+
+interface Props {
+  lang: 'en' | 'es'
+}
+
+const { lang } = Astro.props
+
+const whatsappNumberRow = await db.select().from(pageContent).where(eq(pageContent.key, 'contact.whatsapp')).limit(1)
+const whatsappRaw = whatsappNumberRow[0]?.valueEs || whatsappNumberRow[0]?.valueEn || '1234567890'
+
+const cleanNumber = whatsappRaw.replace(/[^0-9]/g, '')
+
+const whatsappLink = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(lang === 'es' ? '¡Hola Eliana! Quisiera más información.' : 'Hello Eliana! I would like more information.')}`
+---
+
+<a 
+  href={whatsappLink}
+  target="_blank"
+  rel="noopener noreferrer"
+  class="fixed bottom-6 left-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg shadow-[#25D366]/30 transition-transform duration-300 hover:-translate-y-1 hover:scale-110 hover:shadow-xl hover:shadow-[#25D366]/40 focus:outline-none focus:ring-4 focus:ring-[#25D366]/50"
+  aria-label="Direct message on WhatsApp"
+  data-edit-key="contact.whatsapp"
+>
+  <svg class="h-7 w-7" viewBox="0 0 32 32" aria-hidden="true" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 0C7.164 0 0 7.163 0 16c0 2.822.736 5.473 2.027 7.776L0 32l8.468-2.004A15.93 15.93 0 0 0 16 32c8.836 0 16-7.163 16-16S24.836 0 16 0zm0 29.538a13.51 13.51 0 0 1-6.9-1.889l-.494-.294-5.026 1.19 1.215-4.898-.322-.503A13.476 13.476 0 0 1 2.462 16C2.462 8.52 8.52 2.462 16 2.462S29.538 8.52 29.538 16 23.48 29.538 16 29.538zm7.394-10.078c-.405-.203-2.397-1.183-2.769-1.317-.372-.135-.643-.203-.913.203-.27.405-1.048 1.317-1.284 1.587-.236.27-.473.304-.878.101-.405-.203-1.71-.63-3.257-2.011-1.204-1.074-2.017-2.4-2.253-2.805-.236-.405-.025-.624.177-.826.182-.181.405-.473.608-.709.202-.236.27-.405.405-.675.135-.27.068-.507-.034-.709-.101-.203-.913-2.2-1.25-3.013-.33-.791-.664-.683-.913-.696l-.777-.013c-.27 0-.71.101-1.082.507-.372.405-1.419 1.385-1.419 3.379s1.453 3.921 1.655 4.191c.203.27 2.86 4.368 6.929 6.123.968.418 1.723.668 2.311.855.971.309 1.855.265 2.554.161.779-.116 2.397-.981 2.736-1.928.338-.947.338-1.759.236-1.928-.101-.169-.372-.27-.777-.473z"/>
+  </svg>
+</a>

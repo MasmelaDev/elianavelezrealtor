@@ -1,0 +1,12 @@
+---
+import AdminLayout from '../../components/admin/AdminLayout.astro'
+import { db } from '../../lib/db'
+import { pageContent } from '../../db/schema'
+import { ContentEditor } from '../../components/admin/ContentEditor'
+const list = await db.select().from(pageContent)
+---
+<AdminLayout title="Contenido">
+  <h1 class="text-2xl font-semibold text-gray-900">Contenido de la Página</h1>
+  <p class="mt-2 text-sm text-gray-600">Edita todos los textos (EN/ES) e imágenes que se muestran en la página. Los cambios se reflejan inmediatamente.</p>
+  <ContentEditor client:load initialData={list as any} />
+</AdminLayout>

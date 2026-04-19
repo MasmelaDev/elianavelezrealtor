@@ -1,0 +1,142 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+
+interface ServiceItem {
+  key: string;
+  icon: string;
+  title: string;
+  desc: string;
+  image?: string;
+}
+
+interface ServicesContentProps {
+  title: string;
+  body: string;
+  services: ServiceItem[];
+  badgeText?: string;
+}
+
+const iconPaths: Record<string, React.ReactNode> = {
+  home: (
+    <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+  ),
+  building: (
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V13.5Zm0 2.25h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V18Zm2.498-6.75h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V13.5Zm0 2.25h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V18Zm2.504-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5Zm0 2.25h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V18Zm2.498-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5ZM8.25 6h7.5v2.25h-7.5V6ZM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0 0 12 2.25Z" />
+  ),
+  key: (
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-.997.43-1.56A6 6 0 1 1 21.75 8.25Z" />
+  ),
+  star: (
+    <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.5a.75.75 0 0 1 1.04 0l2.122 2.122a.75.75 0 0 0 .53.22h3a.75.75 0 0 1 .53 1.28l-2.122 2.122a.75.75 0 0 0-.22.53v3a.75.75 0 0 1-1.28.53L12.5 11.77a.75.75 0 0 0-1.06 0L9.318 13.88a.75.75 0 0 1-1.28-.53v-3a.75.75 0 0 0-.22-.53L5.696 7.122A.75.75 0 0 1 6.227 5.84h3a.75.75 0 0 0 .53-.22L11.48 3.5Z" />
+  ),
+  chat: (
+    <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3h5.25M21 12a9 9 0 1 1-3.338-6.937L21 3.75v4.5" />
+  ),
+  handshake: (
+    <path strokeLinecap="round" strokeLinejoin="round" d="M8.21 7.043a2.25 2.25 0 0 1 3.181 0l.659.659a1.5 1.5 0 0 0 2.121 0l2.378-2.378A2.25 2.25 0 0 1 19.364 4.5H21v4.5a2.25 2.25 0 0 1-.659 1.591l-4.5 4.5a2.25 2.25 0 0 1-3.182 0L12 13.091" />
+  ),
+};
+
+export const ServicesContent: React.FC<ServicesContentProps> = ({ title, body, services, badgeText = 'Services' }) => {
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.15, delayChildren: 0.2 },
+    },
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 30 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  };
+
+  return (
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <motion.div
+        initial={{ opacity: 0, y: 32 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-160px' }}
+        transition={{ duration: 0.9, ease: "easeOut" }}
+        className="flex flex-col text-center md:flex-row md:items-end md:justify-between md:text-left gap-6"
+      >
+        <div className="max-w-2xl">
+          <div className="mb-3 inline-block rounded-full bg-primary/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary sm:mb-4 sm:px-4 sm:text-sm" data-edit-key="services.badge">
+            {badgeText}
+          </div>
+          <h2 data-edit-key="services.title" className="font-serif text-3xl font-semibold text-on-surface sm:text-4xl md:text-5xl">
+            {title}
+          </h2>
+          <p data-edit-key="services.body" className="mt-4 text-base text-on-surface-muted whitespace-pre-line sm:mt-6 sm:text-lg">
+            {body}
+          </p>
+        </div>
+      </motion.div>
+
+      <motion.div
+        variants={container}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: '-150px' }}
+        className="mt-12 grid gap-5 sm:mt-16 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3"
+      >
+        {services.map((service, index) => (
+          <motion.article
+            key={service.key}
+            variants={item}
+            whileHover={{ y: -6 }}
+            className={`group relative overflow-hidden rounded-2xl border border-gray-100/80 bg-surface shadow-lg transition-all duration-500 hover:shadow-[0_20px_40px_rgba(227,30,47,0.1)] sm:rounded-3xl ${
+              index === 1 ? 'lg:-translate-y-8' : ''
+            }`}
+          >
+            {/* Image Header */}
+            {service.image && (
+              <div className="relative h-48 sm:h-56 overflow-hidden" data-edit-key={`image.service.${service.key}`}>
+                <img
+                  src={service.image}
+                  alt={service.title}
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent" />
+                <div className="absolute top-4 left-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/90 backdrop-blur-sm text-primary shadow-lg overflow-hidden" data-edit-key={`icon.service.${service.key}`}>
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
+                    {iconPaths[service.icon] ?? iconPaths.home}
+                  </svg>
+                </div>
+              </div>
+            )}
+
+            {/* Text Content */}
+            <div className="relative z-10 p-6 sm:p-8">
+              {!service.image && (
+                <>
+                  <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-primary/5 to-accent/5 transition-transform duration-700 ease-out group-hover:scale-[2.5]" />
+                  <div className="relative mb-8 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary-light/5 text-secondary transition-all duration-500 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-primary-dark group-hover:text-white group-hover:scale-110 shadow-sm group-hover:shadow-[0_0_20px_rgba(227,30,47,0.3)] group-hover:-translate-y-2 overflow-hidden" data-edit-key={`icon.service.${service.key}`}>
+                    <svg className="h-8 w-8 transition-transform duration-500 group-hover:rotate-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
+                      {iconPaths[service.icon] ?? iconPaths.home}
+                    </svg>
+                  </div>
+                </>
+              )}
+              <h3 data-edit-key={`services.${service.key}.title`} className="font-serif text-2xl font-bold text-on-surface transition-colors duration-300 group-hover:text-primary">
+                {service.title}
+              </h3>
+              <p data-edit-key={`services.${service.key}.desc`} className="mt-3 leading-relaxed text-on-surface-muted transition-colors duration-300 group-hover:text-on-surface/90">
+                {service.desc}
+              </p>
+
+              <div className="mt-6 flex items-center text-primary font-semibold opacity-0 -translate-x-4 transition-all duration-500 ease-out group-hover:opacity-100 group-hover:translate-x-0">
+                <span className="text-sm uppercase tracking-wide">Learn more</span>
+                <svg className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </div>
+            </div>
+            
+            <div className="absolute bottom-0 left-0 h-1.5 w-0 bg-gradient-to-r from-primary via-accent to-primary transition-all duration-500 ease-in-out group-hover:w-full" />
+          </motion.article>
+        ))}
+      </motion.div>
+    </div>
+  );
+};

@@ -1,0 +1,1 @@
+import{j as s}from"./jsx-runtime.D_zvdyIk.js";import"./index.DeO6U63H.js";function n({className:r="",children:t,...a}){return s.jsx("div",{className:`rounded-lg border border-gray-200 bg-white text-gray-950 shadow-sm ${r}`,...a,children:t})}function d({className:r="",children:t,...a}){return s.jsx("div",{className:`p-6 pt-0 ${r}`,...a,children:t})}export{n as C,d as a};

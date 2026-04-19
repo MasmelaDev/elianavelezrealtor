@@ -1,0 +1,63 @@
+---
+import type { Lang } from '../../i18n/ui'
+import type { UIKey } from '../../i18n/ui'
+import { ServicesContent } from './ServicesContent'
+
+interface Props {
+  lang: Lang
+  t: (key: UIKey) => string
+  title?: string
+  badge?: string
+  body: string
+  serviceImages?: string[]
+  buyTitle?: string
+  buyDesc?: string
+  sellTitle?: string
+  sellDesc?: string
+  rentTitle?: string
+  rentDesc?: string
+  /** Clave de icono (home, building, key, star, chat, handshake) */
+  iconBuy?: string
+  iconSell?: string
+  iconRent?: string
+}
+const {
+  t,
+  title = t('services.title'),
+  badge = t('services.badge'),
+  body,
+  serviceImages = ['/images/hero-bg.png', '/images/hero-2.png', '/images/hero-3.png'],
+  buyTitle = t('services.buy.title'),
+  buyDesc = t('services.buy.desc'),
+  sellTitle = t('services.sell.title'),
+  sellDesc = t('services.sell.desc'),
+  rentTitle = t('services.rent.title'),
+  rentDesc = t('services.rent.desc'),
+  iconBuy,
+  iconSell,
+  iconRent,
+} = Astro.props
+
+const iconKeyBuy = iconBuy || 'home'
+const iconKeySell = iconSell || 'building'
+const iconKeyRent = iconRent || 'key'
+
+const services = [
+  { key: 'buy' as const, icon: iconKeyBuy, title: buyTitle, desc: buyDesc, image: serviceImages[0] },
+  { key: 'sell' as const, icon: iconKeySell, title: sellTitle, desc: sellDesc, image: serviceImages[1] },
+  { key: 'rent' as const, icon: iconKeyRent, title: rentTitle, desc: rentDesc, image: serviceImages[2] },
+] as const
+---
+<section class="relative overflow-hidden bg-surface py-16 sm:py-24 md:py-32" id="services">
+  <div class="absolute inset-0 bg-[url('/images/pattern-light.svg')] opacity-[0.03] pointer-events-none" aria-hidden="true"></div>
+  <div class="absolute right-0 top-0 bottom-0 w-[28%] max-w-md opacity-[0.06] hidden lg:block" aria-hidden="true">
+    <img src="/images/hero-bg.png" alt="" class="h-full w-full object-cover rounded-l-3xl" />
+  </div>
+  <ServicesContent
+    client:visible
+    title={title}
+    body={body}
+    services={services as any}
+    badgeText={badge}
+  />
+</section>

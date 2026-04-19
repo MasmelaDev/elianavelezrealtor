@@ -1,0 +1,102 @@
+---
+import { getLocalizedPath } from '../../i18n/utils'
+import type { Lang } from '../../i18n/ui'
+import type { UIKey } from '../../i18n/ui'
+interface Props {
+  lang: Lang
+  t: (key: UIKey) => string
+  transparentNav?: boolean
+}
+const { lang, t, transparentNav = false } = Astro.props
+const otherLang = lang === 'en' ? 'es' : 'en'
+const homePath = getLocalizedPath('/', lang)
+
+const headerClasses = transparentNav
+  ? 'fixed w-full top-0 z-50 border-b border-white/10 bg-surface-dark/40 backdrop-blur-md shadow-none transition-colors duration-300'
+  : 'fixed w-full top-0 z-50 border-b border-gray-200/80 bg-surface/95 backdrop-blur-sm shadow-sm'
+const textClasses = transparentNav ? 'text-white' : 'text-on-surface'
+const linkClasses = transparentNav ? 'text-white/90 hover:text-white' : 'text-on-surface-muted hover:text-on-surface'
+const logoClasses = transparentNav ? 'brightness-0 invert drop-shadow-md' : ''
+const btnClasses = transparentNav ? 'text-white' : 'text-on-surface'
+---
+<header class={`${headerClasses} animate-fade-down-soft`} id="navbar" data-transparent={String(transparentNav)}>
+  <nav class="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:h-16 sm:px-6">
+    <a href={homePath} class={`flex items-center gap-2 font-serif text-lg font-semibold sm:text-xl ${textClasses}`}>
+      <img src="/images/logo.png" alt="Eliana Velez REALTOR®" class={`h-11 w-auto max-w-[180px] object-contain transition-all sm:h-14 sm:max-w-[220px] ${logoClasses}`} width="220" height="56" />
+      <span class="navbar-brand-fallback hidden">Eliana Velez</span>
+    </a>
+
+    <div class="hidden items-center gap-6 md:flex md:gap-8">
+      <a href={getLocalizedPath('/properties', lang)} class={`text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded ${linkClasses}`}>{t('nav.properties')}</a>
+      <a href={getLocalizedPath('/blog', lang)} class={`text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded ${linkClasses}`}>{t('nav.blog')}</a>
+      <a href={`${homePath}#contact`} class={`text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded ${linkClasses}`}>{t('nav.contact')}</a>
+      <a href={`${homePath}#appointment`} class="rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-dark">
+        {t('nav.book')}
+      </a>
+      <a href={getLocalizedPath('/', otherLang)} class={`text-sm font-medium transition ${linkClasses}`} aria-label="Switch language">
+        {otherLang === 'es' ? 'Español' : 'English'}
+      </a>
+    </div>
+
+    <button type="button" class={`flex h-10 w-10 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg md:hidden ${btnClasses}`} id="nav-toggle" aria-label={t('nav.menuOpen')} aria-expanded="false" data-menu-open-label={t('nav.menuOpen')} data-menu-close-label={t('nav.menuClose')}>
+      <svg class="h-6 w-6 nav-icon-open" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+      </svg>
+      <svg class="h-6 w-6 nav-icon-close hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </nav>
+
+  <div class="fixed inset-0 z-40 hidden bg-surface pt-24 pb-8 md:hidden" id="nav-drawer" aria-hidden="true">
+    <nav class="flex flex-col gap-1 px-4 py-6" aria-label="Menú principal">
+      <a href={getLocalizedPath('/properties', lang)} class="min-h-[48px] rounded-lg px-4 py-3 font-serif text-lg font-medium text-on-surface hover:bg-surface-muted">{t('nav.properties')}</a>
+      <a href={getLocalizedPath('/blog', lang)} class="min-h-[48px] rounded-lg px-4 py-3 font-serif text-lg font-medium text-on-surface hover:bg-surface-muted">{t('nav.blog')}</a>
+      <a href={`${homePath}#contact`} class="min-h-[48px] rounded-lg px-4 py-3 font-serif text-lg font-medium text-on-surface hover:bg-surface-muted">{t('nav.contact')}</a>
+      <a href={`${homePath}#appointment`} class="mt-2 inline-flex min-h-[48px] w-fit items-center rounded-lg bg-accent px-6 py-3 font-semibold text-white">{t('nav.book')}</a>
+      <a href={getLocalizedPath('/', otherLang)} class="min-h-[48px] rounded-lg px-4 py-3 font-serif text-lg font-medium text-on-surface hover:bg-surface-muted">{otherLang === 'es' ? 'Español' : 'English'}</a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  (function () {
+    const toggle = document.getElementById('nav-toggle')
+    const drawer = document.getElementById('nav-drawer')
+    const openIcon = document.querySelector('.nav-icon-open')
+    const closeIcon = document.querySelector('.nav-icon-close')
+    if (!toggle || !drawer) return
+
+    toggle.addEventListener('click', () => {
+      const open = drawer.classList.toggle('hidden')
+      const openLabel = toggle.getAttribute('data-menu-open-label') || 'Open menu'
+      const closeLabel = toggle.getAttribute('data-menu-close-label') || 'Close menu'
+      toggle.setAttribute('aria-expanded', String(!open))
+      toggle.setAttribute('aria-label', open ? openLabel : closeLabel)
+      if (openIcon) openIcon.classList.toggle('hidden', !open)
+      if (closeIcon) closeIcon.classList.toggle('hidden', open)
+      document.body.style.overflow = open ? '' : 'hidden'
+    })
+
+    drawer.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        drawer.classList.add('hidden')
+        toggle?.setAttribute('aria-expanded', 'false')
+        toggle?.setAttribute('aria-label', 'Open menu')
+        if (openIcon) openIcon.classList.remove('hidden')
+        if (closeIcon) closeIcon.classList.add('hidden')
+        document.body.style.overflow = ''
+      })
+    })
+  })()
+</script>
+
+<script>
+  const logo = document.querySelector('#navbar img[src="/images/logo.png"]')
+  if (logo) {
+    logo.addEventListener('error', () => {
+      logo.style.display = 'none'
+      document.querySelector('.navbar-brand-fallback')?.classList.remove('hidden')
+    })
+  }
+</script>

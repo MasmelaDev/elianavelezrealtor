@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../../components/layout/BaseLayout.astro'
+import PublicLayout from '../../../components/layout/PublicLayout.astro'
+import { useTranslations } from '../../../i18n/utils'
+import { db } from '../../../lib/db'
+import { properties } from '../../../db/schema'
+import { eq } from 'drizzle-orm'
+import { PropertyMap } from '../../../components/properties/PropertyMap'
+const { id } = Astro.params
+if (!id) return Astro.redirect('/en/properties')
+const [p] = await db.select().from(properties).where(eq(properties.id, id)).limit(1)
+if (!p) return Astro.redirect('/en/properties')
+const t = useTranslations('en')
+---
+<BaseLayout title={p.titleEn} description={p.descriptionEn ?? p.titleEn} lang="en" image={p.images?.[0]}>
+  <PublicLayout lang="en" t={t}>
+    <div class="mx-auto max-w-4xl px-4 py-8">
+      <a href="/en/properties" class="text-sm text-brand-600 hover:underline">← Properties</a>
+      <h1 class="mt-4 text-3xl font-bold text-gray-900">{p.titleEn}</h1>
+      <p class="mt-2 text-xl text-brand-600">${Number(p.price).toLocaleString()} · {p.zone} · {p.type}</p>
+      {p.images && p.images.length > 0 && (
+        <img src={p.images[0]} alt="" class="mt-6 aspect-video w-full rounded-lg object-cover" />
+      )}
+      {(p.descriptionEn || p.descriptionEs) && (
+        <div class="mt-6 text-gray-700 whitespace-pre-wrap">{p.descriptionEn ?? p.descriptionEs ?? ''}</div>
+      )}
+      {p.lat && p.lng && (
+        <div class="mt-8">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">{t('property.location')}</h2>
+          <PropertyMap client:only="react" lat={Number(p.lat)} lng={Number(p.lng)} />
+        </div>
+      )}
+      <dl class="mt-6 grid gap-2 sm:grid-cols-2">
+        {p.bedrooms != null && <><dt class="text-gray-500">{t('property.bedrooms')}</dt><dd>{p.bedrooms}</dd></>}
+        {p.bathrooms != null && <><dt class="text-gray-500">{t('property.bathrooms')}</dt><dd>{p.bathrooms}</dd></>}
+        {p.areaSqft != null && <><dt class="text-gray-500">{t('property.area')}</dt><dd>{p.areaSqft} sqft</dd></>}
+      </dl>
+      <a href="#contact" class="mt-8 inline-block rounded-lg bg-brand-600 px-6 py-3 font-medium text-white hover:bg-brand-700">{t('property.contact')}</a>
+    </div>
+  </PublicLayout>
+</BaseLayout>

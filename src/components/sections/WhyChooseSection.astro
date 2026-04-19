@@ -1,0 +1,35 @@
+---
+import type { UIKey } from '../../i18n/ui'
+import { WhyChooseContent } from './WhyChooseContent'
+interface Props {
+  t: (key: UIKey) => string
+  whyTitle?: string
+  whySubtitle?: string
+  item1Title?: string
+  item1Desc?: string
+  item2Title?: string
+  item2Desc?: string
+  item3Title?: string
+  item3Desc?: string
+}
+const { t, whyTitle = t('why.title'), whySubtitle = t('why.subtitle'), item1Title = t('why.item1.title'), item1Desc = t('why.item1.desc'), item2Title = t('why.item2.title'), item2Desc = t('why.item2.desc'), item3Title = t('why.item3.title'), item3Desc = t('why.item3.desc') } = Astro.props
+
+const items = [
+  { key: 'item1' as const, icon: 'map' as const, title: item1Title, desc: item1Desc },
+  { key: 'item2' as const, icon: 'handshake' as const, title: item2Title, desc: item2Desc },
+  { key: 'item3' as const, icon: 'shield' as const, title: item3Title, desc: item3Desc },
+] as const
+---
+<section class="why-section relative bg-surface-muted py-16 sm:py-20 md:py-28 overflow-hidden" id="why" aria-labelledby="why-heading">
+  <div class="absolute right-0 top-1/2 -translate-y-1/2 w-[40%] max-w-md opacity-[0.06] hidden xl:block" aria-hidden="true">
+    <img src="/images/elianafull.jpg" alt="" class="rounded-l-3xl object-cover h-80 w-full" />
+  </div>
+  <div class="relative z-10">
+    <WhyChooseContent
+      client:visible
+      title={whyTitle}
+      subtitle={whySubtitle}
+      items={items as any}
+    />
+  </div>
+</section>
