@@ -7,7 +7,7 @@ export const GET: APIRoute = async ({ request }) => {
   const siteUrl = import.meta.env.PUBLIC_SITE_URL || new URL(request.url).origin
 
   // Fetch published content
-  const propsAll = await db.select().from(properties).where(eq(properties.status, 'available'))
+  const propsAll = await db.select().from(properties).where(eq(properties.status, 'sold'))
   const postsAll = await db.select().from(blogPosts).where(eq(blogPosts.published, true))
 
   const props = propsAll.map(p => ({ id: p.id, updatedAt: p.updatedAt }))

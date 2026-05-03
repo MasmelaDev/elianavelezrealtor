@@ -77,10 +77,16 @@ export const DELETE: APIRoute = async ({ params, cookies }) => {
   try {
     const id = params.id
     if (!id || !UUID_RE.test(id)) return Response.json({ error: 'Not found' }, { status: 404 })
+    
+    // First unlink any leads associated with this property to avoid foreign key constraints
+    const { leads } = await import('../../../db/schema')
+    await db.update(leads).set({ propertyId: null }).where(eq(leads.propertyId, id))
+    
     const [deleted] = await db.delete(properties).where(eq(properties.id, id)).returning()
     if (!deleted) return Response.json({ error: 'Not found' }, { status: 404 })
     return new Response(null, { status: 204 })
-  } catch {
+  } catch (err: any) {
+    console.error('Delete error:', err)
     return Response.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

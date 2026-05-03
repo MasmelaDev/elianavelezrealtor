@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import * as LucideIcons from 'lucide-react';
 
 interface WhyItem {
   key: 'item1' | 'item2' | 'item3';
-  icon: 'map' | 'handshake' | 'shield';
+  icon: string;
   title: string;
   desc: string;
 }
@@ -40,6 +41,30 @@ export const WhyChooseContent: React.FC<WhyChooseContentProps> = ({
       y: 0,
       transition: { duration: 0.85, ease: [0.22, 1, 0.36, 1] as const },
     },
+  };
+
+  const [liveIcons, setLiveIcons] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const handleMessage = (e: MessageEvent) => {
+      if (e.data?.type === 'UPDATE_PREVIEW') {
+        const d = e.data.data;
+        if (!d) return;
+        const newIcons: Record<string, string> = {};
+        if (d['why.item1.icon']) newIcons['why.item1.icon'] = d['why.item1.icon'].valueEn;
+        if (d['why.item2.icon']) newIcons['why.item2.icon'] = d['why.item2.icon'].valueEn;
+        if (d['why.item3.icon']) newIcons['why.item3.icon'] = d['why.item3.icon'].valueEn;
+        setLiveIcons((prev) => ({ ...prev, ...newIcons }));
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
+  const renderIcon = (iconName: string) => {
+    const IconComponent = (LucideIcons as any)[iconName];
+    if (!IconComponent) return <LucideIcons.ShieldCheck className="h-6 w-6" />;
+    return <IconComponent className="h-6 w-6" />;
   };
 
   return (
@@ -94,34 +119,9 @@ export const WhyChooseContent: React.FC<WhyChooseContentProps> = ({
               <span
                 className="mb-4 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary sm:mb-0"
                 aria-hidden="true"
+                data-edit-key={`why.${key}.icon`}
               >
-                {icon === 'map' && (
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418"
-                    />
-                  </svg>
-                )}
-                {icon === 'handshake' && (
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
-                    />
-                  </svg>
-                )}
-                {icon === 'shield' && (
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"
-                    />
-                  </svg>
-                )}
+                {renderIcon(liveIcons[`why.${key}.icon`] || icon)}
               </span>
               <div>
                 <h3

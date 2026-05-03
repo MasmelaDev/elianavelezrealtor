@@ -11,13 +11,16 @@ interface Props {
   item2Desc?: string
   item3Title?: string
   item3Desc?: string
+  icon1?: string
+  icon2?: string
+  icon3?: string
 }
-const { t, whyTitle = t('why.title'), whySubtitle = t('why.subtitle'), item1Title = t('why.item1.title'), item1Desc = t('why.item1.desc'), item2Title = t('why.item2.title'), item2Desc = t('why.item2.desc'), item3Title = t('why.item3.title'), item3Desc = t('why.item3.desc') } = Astro.props
+const { t, whyTitle = t('why.title'), whySubtitle = t('why.subtitle'), item1Title = t('why.item1.title'), item1Desc = t('why.item1.desc'), item2Title = t('why.item2.title'), item2Desc = t('why.item2.desc'), item3Title = t('why.item3.title'), item3Desc = t('why.item3.desc'), icon1 = 'MapPin', icon2 = 'Handshake', icon3 = 'ShieldCheck' } = Astro.props
 
 const items = [
-  { key: 'item1' as const, icon: 'map' as const, title: item1Title, desc: item1Desc },
-  { key: 'item2' as const, icon: 'handshake' as const, title: item2Title, desc: item2Desc },
-  { key: 'item3' as const, icon: 'shield' as const, title: item3Title, desc: item3Desc },
+  { key: 'item1' as const, icon: icon1, title: item1Title, desc: item1Desc },
+  { key: 'item2' as const, icon: icon2, title: item2Title, desc: item2Desc },
+  { key: 'item3' as const, icon: icon3, title: item3Title, desc: item3Desc },
 ] as const
 ---
 <section class="why-section relative bg-surface-muted py-16 sm:py-20 md:py-28 overflow-hidden" id="why" aria-labelledby="why-heading">

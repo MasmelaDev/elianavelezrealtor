@@ -16,28 +16,37 @@ interface ServicesContentProps {
   badgeText?: string;
 }
 
-const iconPaths: Record<string, React.ReactNode> = {
-  home: (
-    <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-  ),
-  building: (
-    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V13.5Zm0 2.25h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V18Zm2.498-6.75h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V13.5Zm0 2.25h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V18Zm2.504-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5Zm0 2.25h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V18Zm2.498-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5ZM8.25 6h7.5v2.25h-7.5V6ZM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0 0 12 2.25Z" />
-  ),
-  key: (
-    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-.997.43-1.56A6 6 0 1 1 21.75 8.25Z" />
-  ),
-  star: (
-    <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.5a.75.75 0 0 1 1.04 0l2.122 2.122a.75.75 0 0 0 .53.22h3a.75.75 0 0 1 .53 1.28l-2.122 2.122a.75.75 0 0 0-.22.53v3a.75.75 0 0 1-1.28.53L12.5 11.77a.75.75 0 0 0-1.06 0L9.318 13.88a.75.75 0 0 1-1.28-.53v-3a.75.75 0 0 0-.22-.53L5.696 7.122A.75.75 0 0 1 6.227 5.84h3a.75.75 0 0 0 .53-.22L11.48 3.5Z" />
-  ),
-  chat: (
-    <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3h5.25M21 12a9 9 0 1 1-3.338-6.937L21 3.75v4.5" />
-  ),
-  handshake: (
-    <path strokeLinecap="round" strokeLinejoin="round" d="M8.21 7.043a2.25 2.25 0 0 1 3.181 0l.659.659a1.5 1.5 0 0 0 2.121 0l2.378-2.378A2.25 2.25 0 0 1 19.364 4.5H21v4.5a2.25 2.25 0 0 1-.659 1.591l-4.5 4.5a2.25 2.25 0 0 1-3.182 0L12 13.091" />
-  ),
-};
+import * as LucideIcons from 'lucide-react';
 
-export const ServicesContent: React.FC<ServicesContentProps> = ({ title, body, services, badgeText = 'Services' }) => {
+export const ServicesContent: React.FC<ServicesContentProps> = ({ title, body, services: initialServices, badgeText = 'Services' }) => {
+  const [liveServices, setLiveServices] = React.useState(initialServices);
+  const [liveTitle, setLiveTitle] = React.useState(title);
+  const [liveBody, setLiveBody] = React.useState(body);
+  const [liveBadgeText, setLiveBadgeText] = React.useState(badgeText);
+
+  React.useEffect(() => {
+    const handleMessage = (e: MessageEvent) => {
+      if (e.data?.type === 'UPDATE_PREVIEW') {
+        const d = e.data.data;
+        const l = e.data.lang;
+        const f = l === 'es' ? 'valueEs' : 'valueEn';
+        
+        if (d['services.title']) setLiveTitle(d['services.title'][f]);
+        if (d['services.body']) setLiveBody(d['services.body'][f]);
+        if (d['services.badge']) setLiveBadgeText(d['services.badge'][f]);
+
+        setLiveServices(prev => prev.map(s => {
+          const sTitle = d[`services.${s.key}.title`]?.[f] ?? s.title;
+          const sDesc = d[`services.${s.key}.desc`]?.[f] ?? s.desc;
+          const sIcon = d[`icon.service.${s.key}`]?.valueEn ?? s.icon; // Icon value is language-agnostic
+          const sImage = d[`image.service.${s.key}`]?.valueEn ?? s.image;
+          return { ...s, title: sTitle, desc: sDesc, icon: sIcon || s.icon, image: sImage };
+        }));
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [initialServices]);
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -62,13 +71,13 @@ export const ServicesContent: React.FC<ServicesContentProps> = ({ title, body, s
       >
         <div className="max-w-2xl">
           <div className="mb-3 inline-block rounded-full bg-primary/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary sm:mb-4 sm:px-4 sm:text-sm" data-edit-key="services.badge">
-            {badgeText}
+            {liveBadgeText}
           </div>
           <h2 data-edit-key="services.title" className="font-serif text-3xl font-semibold text-on-surface sm:text-4xl md:text-5xl">
-            {title}
+            {liveTitle}
           </h2>
           <p data-edit-key="services.body" className="mt-4 text-base text-on-surface-muted whitespace-pre-line sm:mt-6 sm:text-lg">
-            {body}
+            {liveBody}
           </p>
         </div>
       </motion.div>
@@ -80,7 +89,21 @@ export const ServicesContent: React.FC<ServicesContentProps> = ({ title, body, s
         viewport={{ once: true, margin: '-150px' }}
         className="mt-12 grid gap-5 sm:mt-16 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3"
       >
-        {services.map((service, index) => (
+        {liveServices.map((service, index) => {
+          // Dynamic Lucide icon component mapping
+          // Support for exact match (e.g. 'Home') or our legacy mappings
+          const LegacyMapping: Record<string, string> = {
+            home: 'Home',
+            building: 'Building2',
+            key: 'Key',
+            star: 'Star',
+            chat: 'MessageCircle',
+            handshake: 'Handshake'
+          };
+          const resolvedName = LegacyMapping[service.icon] || service.icon || 'Home';
+          const IconComponent = (LucideIcons as any)[resolvedName] || LucideIcons.Home;
+
+          return (
           <motion.article
             key={service.key}
             variants={item}
@@ -99,9 +122,7 @@ export const ServicesContent: React.FC<ServicesContentProps> = ({ title, body, s
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent" />
                 <div className="absolute top-4 left-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/90 backdrop-blur-sm text-primary shadow-lg overflow-hidden" data-edit-key={`icon.service.${service.key}`}>
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
-                    {iconPaths[service.icon] ?? iconPaths.home}
-                  </svg>
+                  <IconComponent className="h-6 w-6" strokeWidth={1.5} aria-hidden="true" />
                 </div>
               </div>
             )}
@@ -112,9 +133,7 @@ export const ServicesContent: React.FC<ServicesContentProps> = ({ title, body, s
                 <>
                   <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-primary/5 to-accent/5 transition-transform duration-700 ease-out group-hover:scale-[2.5]" />
                   <div className="relative mb-8 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary-light/5 text-secondary transition-all duration-500 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-primary-dark group-hover:text-white group-hover:scale-110 shadow-sm group-hover:shadow-[0_0_20px_rgba(227,30,47,0.3)] group-hover:-translate-y-2 overflow-hidden" data-edit-key={`icon.service.${service.key}`}>
-                    <svg className="h-8 w-8 transition-transform duration-500 group-hover:rotate-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
-                      {iconPaths[service.icon] ?? iconPaths.home}
-                    </svg>
+                    <IconComponent className="h-8 w-8 transition-transform duration-500 group-hover:rotate-6" strokeWidth={1.5} aria-hidden="true" />
                   </div>
                 </>
               )}
@@ -135,7 +154,7 @@ export const ServicesContent: React.FC<ServicesContentProps> = ({ title, body, s
             
             <div className="absolute bottom-0 left-0 h-1.5 w-0 bg-gradient-to-r from-primary via-accent to-primary transition-all duration-500 ease-in-out group-hover:w-full" />
           </motion.article>
-        ))}
+        )})}
       </motion.div>
     </div>
   );

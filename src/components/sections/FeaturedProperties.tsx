@@ -35,7 +35,7 @@ export default function FeaturedProperties({
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch(`/api/properties?featured=true&status=available&limit=${limit}`)
+    fetch(`/api/properties?featured=true&status=sold&limit=${limit}`)
       .then((r) => r.json())
       .then((data) => {
         if (data.data) setList(data.data)

@@ -52,7 +52,7 @@ export default function ContactForm({
   return (
     <motion.section
       id="contact"
-      className="relative overflow-hidden bg-surface-muted py-16 sm:py-20 md:py-28"
+      className="relative w-full overflow-hidden bg-surface-muted py-16 sm:py-20 md:py-28"
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-160px' }}
@@ -92,7 +92,7 @@ export default function ContactForm({
                 {t('form.success')}
               </p>
             ) : (
-              <form onSubmit={submit} className="mt-8 max-w-md lg:max-w-xl space-y-5">
+              <form onSubmit={submit} className="mt-8 w-full space-y-5">
                 {error && (
                   <p className="rounded-xl bg-red-50 border border-red-100 px-4 py-3 text-sm font-medium text-red-700">{error}</p>
                 )}

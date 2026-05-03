@@ -49,9 +49,30 @@ const { lang, t, transparentNav = false, editorMode = false } = Astro.props
             var key = el.getAttribute('data-edit-key');
             var val = data[key] && data[key][field];
             if (val === undefined) return;
-            var img = el.tagName === 'IMG' ? el : el.querySelector('img');
-            if (img) img.src = val;
-            else if (el.children.length === 0) el.textContent = val;
+            
+            if (key.startsWith('image.')) {
+              var img = el.tagName === 'IMG' ? el : el.querySelector('img');
+              if (img) img.src = val;
+              return;
+            }
+            if (key.startsWith('icon.') || key.startsWith('contact.') || key.includes('.rating')) {
+              return; // handled by React state or reload
+            }
+
+            var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
+            var node;
+            var targetNode = null;
+            while ((node = walker.nextNode())) {
+              if (node.nodeValue.trim().length > 0) {
+                targetNode = node;
+                break;
+              }
+            }
+            if (targetNode) {
+              targetNode.nodeValue = val;
+            } else if (el.children.length === 0) {
+              el.textContent = val;
+            }
           });
         }
       });

@@ -9,7 +9,7 @@ const t = useTranslations('es')
 const url = Astro.url
 const zone = url.searchParams.get('zone')
 const type = url.searchParams.get('type')
-const conditions = [eq(properties.status, 'available')]
+const conditions = [eq(properties.status, 'sold')]
 if (zone) conditions.push(eq(properties.zone, zone))
 if (type) conditions.push(eq(properties.type, type))
 const whereClause = and(...conditions)
@@ -18,7 +18,7 @@ const [list] = await Promise.all([
   db.select().from(properties).where(whereClause).orderBy(desc(properties.createdAt))
 ])
 ---
-<BaseLayout title="Propiedades" description="Propiedades disponibles" lang="es">
+<BaseLayout title="Portafolio" description="Portafolio de propiedades vendidas y arrendadas." lang="es">
   <PublicLayout lang="es" t={t}>
     <div class="mx-auto max-w-7xl px-4 py-8">
       <h1 class="text-2xl font-bold text-gray-900 mb-6">{t('properties.title')}</h1>

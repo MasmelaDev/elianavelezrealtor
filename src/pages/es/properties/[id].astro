@@ -7,7 +7,8 @@ import { properties } from '../../../db/schema'
 import { eq } from 'drizzle-orm'
 import { PropertyMap } from '../../../components/properties/PropertyMap'
 const { id } = Astro.params
-if (!id) return Astro.redirect('/es/properties')
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+if (!id || !UUID_RE.test(id)) return Astro.redirect('/es/properties')
 const [p] = await db.select().from(properties).where(eq(properties.id, id)).limit(1)
 if (!p) return Astro.redirect('/es/properties')
 const t = useTranslations('es')

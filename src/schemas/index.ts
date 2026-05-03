@@ -32,7 +32,7 @@ export const PropertySchema = z.object({
   address: z.string().optional(),
   lat: z.number().optional(),
   lng: z.number().optional(),
-  images: z.array(z.string().url()).default([]),
+  images: z.array(z.string()).default([]),
   features: z.array(z.string()).default([]),
   featured: z.boolean().default(false),
 })
@@ -45,7 +45,7 @@ export const BlogPostSchema = z.object({
   contentEs: z.string().optional(),
   excerptEn: z.string().max(500).optional(),
   excerptEs: z.string().max(500).optional(),
-  coverImage: z.string().url().optional(),
+  coverImage: z.string().optional(),
   published: z.boolean().default(false),
 })
 

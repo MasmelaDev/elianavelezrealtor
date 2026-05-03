@@ -1,0 +1,124 @@
+---
+import AdminLayout from '../../components/admin/AdminLayout.astro'
+import { db } from '../../lib/db'
+import { adminUsers } from '../../db/schema'
+import { eq } from 'drizzle-orm'
+import { getTokenFromCookies, verifyToken } from '../../lib/auth'
+
+const token = getTokenFromCookies(Astro.cookies)
+if (!token) return Astro.redirect('/admin/login')
+
+let userEmail = ''
+try {
+  const session = await verifyToken(token)
+  const [user] = await db.select().from(adminUsers).where(eq(adminUsers.id, session.userId)).limit(1)
+  if (user) userEmail = user.email
+} catch {
+  return Astro.redirect('/admin/login')
+}
+---
+<AdminLayout title="Configuración de Perfil">
+  <div class="max-w-2xl mx-auto">
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold text-gray-900">Configuración de Perfil</h1>
+      <p class="text-sm text-gray-500">Actualiza tus credenciales de acceso al panel administrativo.</p>
+    </div>
+
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      <div class="p-6 border-b border-gray-100 bg-gray-50/50">
+        <h2 class="text-sm font-semibold text-gray-900">Datos de la Cuenta</h2>
+      </div>
+      
+      <form id="profile-form" class="p-6 space-y-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
+          <input 
+            type="email" 
+            name="email" 
+            required 
+            value={userEmail}
+            class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-brand-600 sm:text-sm"
+          />
+          <p class="mt-1 text-xs text-gray-500">Este correo se usará para iniciar sesión.</p>
+        </div>
+
+        <div class="pt-4 border-t border-gray-100">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nueva Contraseña</label>
+          <input 
+            type="password" 
+            name="password" 
+            minLength="8"
+            placeholder="Dejar en blanco para no cambiar"
+            class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-brand-600 sm:text-sm"
+          />
+          <p class="mt-1 text-xs text-gray-500">Mínimo 8 caracteres.</p>
+        </div>
+
+        <div id="status-msg" class="hidden rounded-lg p-3 text-sm"></div>
+
+        <div class="flex justify-end pt-4">
+          <button 
+            type="submit" 
+            class="rounded-lg bg-brand-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700 transition-colors"
+          >
+            Guardar Cambios
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="mt-8 rounded-xl bg-amber-50 border border-amber-200 p-4">
+      <div class="flex gap-3">
+        <svg class="h-5 w-5 text-amber-600" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+        </svg>
+        <div>
+          <h3 class="text-sm font-semibold text-amber-800">Nota sobre Seguridad</h3>
+          <p class="mt-1 text-xs text-amber-700 leading-relaxed">
+            Si cambias tu correo o contraseña, asegúrate de recordarlos. No hay forma de recuperarlos automáticamente si los pierdes, tendrías que volver a ejecutar el comando de "seed" desde la terminal del servidor.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('profile-form') as HTMLFormElement
+    const statusMsg = document.getElementById('status-msg')!
+
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      const fd = new FormData(form)
+      const email = fd.get('email')
+      const password = fd.get('password')
+
+      statusMsg.classList.add('hidden')
+
+      try {
+        const res = await fetch('/api/admin/profile', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        })
+        const data = await res.json()
+
+        if (res.ok) {
+          statusMsg.textContent = '¡Perfil actualizado con éxito!'
+          statusMsg.className = 'rounded-lg p-3 text-sm bg-green-50 text-green-700 border border-green-200'
+          statusMsg.classList.remove('hidden')
+          // Clear password field
+          const pwdInput = form.querySelector('input[name="password"]') as HTMLInputElement
+          if (pwdInput) pwdInput.value = ''
+        } else {
+          statusMsg.textContent = data.error || 'Error al actualizar el perfil'
+          statusMsg.className = 'rounded-lg p-3 text-sm bg-red-50 text-red-700 border border-red-200'
+          statusMsg.classList.remove('hidden')
+        }
+      } catch (err) {
+        statusMsg.textContent = 'Error de conexión'
+        statusMsg.className = 'rounded-lg p-3 text-sm bg-red-50 text-red-700 border border-red-200'
+        statusMsg.classList.remove('hidden')
+      }
+    })
+  </script>
+</AdminLayout>

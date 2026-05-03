@@ -6,11 +6,9 @@ import StatsSection from '../../components/sections/StatsSection.astro'
 import WhyChooseSection from '../../components/sections/WhyChooseSection.astro'
 import AboutSection from '../../components/sections/AboutSection.astro'
 import ServicesSection from '../../components/sections/ServicesSection.astro'
-import BlogPreview from '../../components/sections/BlogPreview.astro'
 import { getLangFromUrl, useTranslations } from '../../i18n/utils'
 import { db } from '../../lib/db'
 import { pageContent } from '../../db/schema'
-import { blogPosts } from '../../db/schema'
 import { eq } from 'drizzle-orm'
 import FeaturedProperties from '../../components/sections/FeaturedProperties'
 import ContactForm from '../../components/sections/ContactForm'
@@ -57,6 +55,9 @@ const whyItem2Title = content['why.item2.title']?.en ?? t('why.item2.title')
 const whyItem2Desc = content['why.item2.desc']?.en ?? t('why.item2.desc')
 const whyItem3Title = content['why.item3.title']?.en ?? t('why.item3.title')
 const whyItem3Desc = content['why.item3.desc']?.en ?? t('why.item3.desc')
+const whyIcon1 = (content['why.item1.icon']?.en ?? '').trim() || undefined
+const whyIcon2 = (content['why.item2.icon']?.en ?? '').trim() || undefined
+const whyIcon3 = (content['why.item3.icon']?.en ?? '').trim() || undefined
 const contactTitle = content['contact.title']?.en ?? t('contact.title')
 const statsYears = content['stats.years']?.en ?? t('stats.years')
 const statsYearsLabel = content['stats.yearsLabel']?.en ?? t('stats.yearsLabel')
@@ -90,16 +91,6 @@ const enTestimonials = enTestimonialsRaw.some(t => t.name || t.content) ? enTest
   { id: '3', name: 'Elena Rodriguez', role: 'Home Seller', content: 'Selling a house can be stressful, but she made it seamless. My house sold over asking price within a week!', image: '/images/elena.jpg', rating: 5 },
 ]
 
-const posts = await db.select({
-  id: blogPosts.id,
-  slug: blogPosts.slug,
-  titleEn: blogPosts.titleEn,
-  titleEs: blogPosts.titleEs,
-  excerptEn: blogPosts.excerptEn,
-  excerptEs: blogPosts.excerptEs,
-  coverImage: blogPosts.coverImage,
-}).from(blogPosts).where(eq(blogPosts.published, true)).limit(3)
-
 const propsList = await db.select({
   id: properties.id,
   titleEn: properties.titleEn,
@@ -107,7 +98,7 @@ const propsList = await db.select({
   price: properties.price,
   lat: properties.lat,
   lng: properties.lng
-}).from(properties).where(eq(properties.status, 'available'))
+}).from(properties).where(eq(properties.status, 'sold'))
 ---
 <BaseLayout title="Home" description={heroSubtitle} lang="en">
   <PublicLayout lang="en" t={t} transparentNav={true} editorMode={Astro.url.searchParams.get('editor') === 'true'}>
@@ -144,6 +135,9 @@ const propsList = await db.select({
       item2Desc={whyItem2Desc}
       item3Title={whyItem3Title}
       item3Desc={whyItem3Desc}
+      icon1={whyIcon1}
+      icon2={whyIcon2}
+      icon3={whyIcon3}
     />
     <AboutSection lang="en" t={t} title={aboutTitle} body={aboutBody} badge={aboutBadge} cta={aboutCta} happyClients={aboutHappyClients} badgeFloatingTitle={aboutBadgeFloatingTitle} badgeFloatingDesc={aboutBadgeFloatingDesc} cardImage={aboutImage} />
     <ServicesSection lang="en" t={t} title={servicesTitle} badge={servicesBadge} body={servicesBody} serviceImages={[serviceBuyImage, serviceSellImage, serviceRentImage]} buyTitle={servicesBuyTitle} buyDesc={servicesBuyDesc} sellTitle={servicesSellTitle} sellDesc={servicesSellDesc} rentTitle={servicesRentTitle} rentDesc={servicesRentDesc} iconBuy={iconBuy} iconSell={iconSell} iconRent={iconRent} />
@@ -153,19 +147,6 @@ const propsList = await db.select({
       subtitle={testimonialsSubtitle}
       testimonials={enTestimonials}
     />
-    <section class="map-section relative bg-surface-muted py-12 sm:py-16 md:py-20 lg:py-28 overflow-hidden" id="map">
-      <div class="absolute inset-0 opacity-[0.04] pointer-events-none hidden lg:block" aria-hidden="true">
-        <img src="/images/hero-bg.png" alt="" class="h-full w-full object-cover" />
-      </div>
-      <div class="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <h2 class="font-serif text-2xl font-semibold text-on-surface sm:text-3xl md:text-4xl">{t('properties.mapTitle')}</h2>
-        <div class="mt-4 min-h-[320px] overflow-hidden rounded-2xl border border-gray-200/80 bg-surface sm:mt-6 sm:min-h-[400px] md:mt-8 shadow-xl">
-          <ZoneMap client:only="react" properties={propsList} lang="en" />
-        </div>
-      </div>
-    </section>
-    <BlogPreview lang="en" t={t} posts={posts} />
     <ContactForm client:load lang="en" contactTitle={contactTitle} whatsappNumber={content['contact.whatsapp']?.en} />
-    <AppointmentForm client:load lang="en" />
   </PublicLayout>
 </BaseLayout>
