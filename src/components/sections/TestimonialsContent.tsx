@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 
 interface Testimonial {
   id: string;
@@ -17,19 +16,6 @@ interface Props {
 }
 
 export default function TestimonialsContent({ title, subtitle, testimonials }: Props) {
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.2 },
-    },
-  };
-
-  const item = {
-    hidden: { opacity: 0, scale: 0.95, y: 30 },
-    show: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
-  };
-
   return (
     <section className="bg-surface-gray py-24 md:py-32 relative overflow-hidden">
       {/* Decorative Elements */}
@@ -39,12 +25,7 @@ export default function TestimonialsContent({ title, subtitle, testimonials }: P
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16 md:mb-20">
-          <motion.div
-            initial={{ opacity: 0, y: -24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-160px' }}
-            transition={{ duration: 0.9, ease: "easeOut" }}
-          >
+          <div className="reveal-fade-down">
             <div className="mb-4 inline-block rounded-full bg-surface border border-gray-200 px-5 py-2 text-sm font-bold uppercase tracking-widest text-primary shadow-sm hover:shadow-md transition-shadow">
               Client Stories
             </div>
@@ -54,21 +35,14 @@ export default function TestimonialsContent({ title, subtitle, testimonials }: P
             <p data-edit-key="testimonials.subtitle" className="mt-6 text-lg text-on-surface-muted max-w-2xl mx-auto font-light leading-relaxed">
               {subtitle}
             </p>
-          </motion.div>
+          </div>
         </div>
 
-        <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: '-140px' }}
-          className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
-        >
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {testimonials.map((t, idx) => (
-            <motion.div
+            <div
               key={t.id}
-              variants={item}
-              className={`relative bg-surface p-10 rounded-3xl border border-gray-100 shadow-xl transition-all duration-500 hover:shadow-[0_20px_40px_rgba(15,42,61,0.08)] hover:-translate-y-2 group flex flex-col justify-between ${
+              className={`reveal-on-scroll reveal-delay-${idx + 1} relative bg-surface p-10 rounded-3xl border border-gray-100 shadow-xl transition-all duration-300 hover:shadow-[0_20px_40px_rgba(15,42,61,0.08)] hover:-translate-y-2 group flex flex-col justify-between ${
                 idx === 1 ? 'lg:translate-y-8' : ''
               }`}
             >
@@ -118,9 +92,9 @@ export default function TestimonialsContent({ title, subtitle, testimonials }: P
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

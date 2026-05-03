@@ -1,5 +1,4 @@
 import { useState, type FormEvent } from 'react'
-import { motion } from 'framer-motion'
 import { useTranslations } from '../../i18n/utils'
 
 export default function ContactForm({
@@ -53,24 +52,14 @@ export default function ContactForm({
     'mt-1 w-full rounded-xl border border-gray-200 bg-surface-gray/30 px-4 py-3 text-on-surface transition-all duration-300 focus:border-primary focus:bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 hover:border-gray-300'
 
   return (
-    <motion.section
+    <section
       id="contact"
       className="relative w-full overflow-hidden bg-surface-muted py-16 sm:py-20 md:py-28"
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-160px' }}
-      transition={{ duration: 0.9, ease: 'easeOut' }}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid gap-10 lg:grid-cols-2 lg:gap-16 lg:items-center">
           {/* Photo: hidden on mobile, left on desktop */}
-          <motion.div
-            className="order-2 lg:order-1 hidden lg:flex flex-col items-center justify-center"
-            initial={{ opacity: 0, x: -40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-120px' }}
-            transition={{ duration: 0.8, ease: 'easeOut', delay: 0.1 }}
-          >
+          <div className="reveal-fade-left order-2 lg:order-1 hidden lg:flex flex-col items-center justify-center">
             <div className="relative w-full max-w-sm">
               <img
                 src="/images/eliana.png"
@@ -78,15 +67,9 @@ export default function ContactForm({
                 className="w-full max-w-[320px] mx-auto object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.12)] rounded-2xl"
               />
             </div>
-          </motion.div>
+          </div>
           {/* Form: full width on mobile, right column on desktop */}
-          <motion.div
-            className="order-1 lg:order-2 min-w-0"
-            initial={{ opacity: 0, x: 40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-120px' }}
-            transition={{ duration: 0.8, ease: 'easeOut', delay: 0.15 }}
-          >
+          <div className="reveal-fade-right order-1 lg:order-2 min-w-0">
             <h2 data-edit-key="contact.title" className="font-serif text-3xl font-semibold text-on-surface md:text-4xl">
               {title}
             </h2>
@@ -147,9 +130,9 @@ export default function ContactForm({
                 {lang === 'es' ? 'Escríbeme aquí' : 'Message me here'}
               </a>
             </p>
-          </motion.div>
+          </div>
         </div>
       </div>
-    </motion.section>
+    </section>
   )
 }

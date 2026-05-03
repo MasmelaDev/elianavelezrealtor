@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 
 interface Property {
   id: string
@@ -46,24 +45,11 @@ export default function FeaturedProperties({
   const title = (p: Property) => (lang === 'es' ? p.titleEs : p.titleEn)
   const typeLabel = (type: string) => (type === 'sale' ? typeSale : typeRent)
 
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.12 },
-    },
-  }
-
-  const item = {
-    hidden: { opacity: 0, y: 32 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.75 } },
-  }
-
   return (
     <section className="bg-surface py-24 md:py-32" id="properties">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-          <div>
+          <div className="reveal-on-scroll">
             <div className="mb-4 inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-widest text-primary">
               Portfolio
             </div>
@@ -74,7 +60,7 @@ export default function FeaturedProperties({
           {!loading && list.length > 0 && (
             <a
               href={lang === 'en' ? '/en/properties' : '/es/properties'}
-              className="inline-flex items-center justify-center rounded-lg bg-surface border border-gray-200 px-6 py-3 font-semibold text-on-surface transition-all duration-300 hover:bg-surface-gray hover:shadow-sm"
+              className="reveal-on-scroll reveal-delay-1 inline-flex items-center justify-center rounded-lg bg-surface border border-gray-200 px-6 py-3 font-semibold text-on-surface transition-all duration-300 hover:bg-surface-gray hover:shadow-sm"
             >
               {viewAll}
               <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -93,20 +79,12 @@ export default function FeaturedProperties({
             <p className="text-lg text-on-surface-muted">{emptyFeatured}</p>
           </div>
         ) : (
-          <motion.div
-            variants={container}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: '-140px' }}
-            className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3"
-          >
-            {list.map((p) => (
-              <motion.a
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {list.map((p, idx) => (
+              <a
                 key={p.id}
-                variants={item}
-                whileHover={{ y: -12 }}
                 href={lang === 'en' ? `/en/properties/${p.id}` : `/es/properties/${p.id}`}
-                className="group flex flex-col overflow-hidden rounded-3xl border border-gray-100 bg-surface shadow-lg transition-all duration-500 hover:shadow-[0_20px_40px_rgba(227,30,47,0.12)]"
+                className={`reveal-on-scroll reveal-delay-${Math.min(idx + 1, 6)} group flex flex-col overflow-hidden rounded-3xl border border-gray-100 bg-surface shadow-lg transition-all duration-300 hover:shadow-[0_20px_40px_rgba(227,30,47,0.12)] hover:-translate-y-3`}
               >
                 <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
                   {p.images?.[0] ? (
@@ -159,9 +137,9 @@ export default function FeaturedProperties({
                     </svg>
                   </div>
                 </div>
-              </motion.a>
+              </a>
             ))}
-          </motion.div>
+          </div>
         )}
       </div>
     </section>

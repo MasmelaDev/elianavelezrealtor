@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { motion, useInView, useMotionValue, useSpring } from 'framer-motion';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { useNativeInView } from '../../hooks/useNativeInView';
 
 interface StatProps {
   value: string;
@@ -10,52 +10,49 @@ interface StatProps {
 }
 
 const StatCard: React.FC<StatProps> = ({ value, label, delay = 0, editKeyValue, editKeyLabel }) => {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const inView = useInView(ref, { amount: 0.7, once: true });
+  const { ref, inView } = useNativeInView(0.7);
 
   const match = value.match(/^\D*(\d+(?:\.\d+)?)(.*)$/);
   const targetNum = match ? parseFloat(match[1]) : Number(value) || 0;
   const suffix = match ? match[2] : '';
-
-  const motionValue = useMotionValue(0);
-  const spring = useSpring(motionValue, {
-    stiffness: 120,
-    damping: 20,
-    mass: 0.6,
-  });
+  const isInteger = Number.isInteger(targetNum);
 
   const [display, setDisplay] = useState(value);
+  const animatedRef = useRef(false);
 
-  useEffect(() => {
-    if (inView && targetNum > 0) {
-      const timer = setTimeout(() => {
-        motionValue.set(targetNum);
-      }, delay);
-      return () => clearTimeout(timer);
-    }
-  }, [inView, targetNum, delay, motionValue]);
+  const animate = useCallback(() => {
+    if (animatedRef.current || targetNum === 0) return;
+    animatedRef.current = true;
 
-  useEffect(() => {
-    const unsubscribe = spring.on('change', (v) => {
-      if (!inView) return;
-      const rounded = Number.isInteger(targetNum) ? Math.round(v) : parseFloat(v.toFixed(1));
-      if (v === 0 && targetNum === 0) {
-        setDisplay(`${value}`);
-      } else {
-        setDisplay(`${rounded}${suffix}`);
+    const duration = 1200; // ms
+    const start = performance.now();
+
+    function tick(now: number) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = eased * targetNum;
+      const formatted = isInteger ? Math.round(current) : parseFloat(current.toFixed(1));
+      setDisplay(`${formatted}${suffix}`);
+
+      if (progress < 1) {
+        requestAnimationFrame(tick);
       }
-    });
-    return () => unsubscribe();
-  }, [spring, suffix, targetNum, value, inView]);
+    }
+
+    setTimeout(() => requestAnimationFrame(tick), delay);
+  }, [targetNum, suffix, isInteger, delay]);
+
+  useEffect(() => {
+    if (inView) animate();
+  }, [inView, animate]);
 
   return (
-    <motion.div
-      ref={ref}
-      className="flex flex-col items-center text-center"
-      initial={{ opacity: 0, y: 28 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.7 }}
-      transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] as const, delay: delay / 1000 }}
+    <div
+      ref={ref as React.RefObject<HTMLDivElement>}
+      className="reveal-on-scroll flex flex-col items-center text-center"
+      style={{ transitionDelay: `${delay}ms` }}
     >
       <span
         className="font-serif text-4xl font-bold text-white drop-shadow-sm sm:text-5xl md:text-5xl"
@@ -70,7 +67,7 @@ const StatCard: React.FC<StatProps> = ({ value, label, delay = 0, editKeyValue, 
       >
         {label}
       </span>
-    </motion.div>
+    </div>
   );
 };
 
@@ -97,21 +94,21 @@ export const StatsContent: React.FC<StatsContentProps> = ({
         <StatCard
           value={years}
           label={yearsLabel}
-          delay={120}
+          delay={0}
           editKeyValue="stats.years"
           editKeyLabel="stats.yearsLabel"
         />
         <StatCard
           value={clients}
           label={clientsLabel}
-          delay={240}
+          delay={100}
           editKeyValue="stats.clients"
           editKeyLabel="stats.clientsLabel"
         />
         <StatCard
           value={deals}
           label={dealsLabel}
-          delay={360}
+          delay={200}
           editKeyValue="stats.deals"
           editKeyLabel="stats.dealsLabel"
         />
@@ -119,4 +116,3 @@ export const StatsContent: React.FC<StatsContentProps> = ({
     </div>
   );
 };
-

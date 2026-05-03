@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 
 interface ServiceItem {
   key: string;
@@ -38,7 +37,7 @@ export const ServicesContent: React.FC<ServicesContentProps> = ({ title, body, s
         setLiveServices(prev => prev.map(s => {
           const sTitle = d[`services.${s.key}.title`]?.[f] ?? s.title;
           const sDesc = d[`services.${s.key}.desc`]?.[f] ?? s.desc;
-          const sIcon = d[`icon.service.${s.key}`]?.valueEn ?? s.icon; // Icon value is language-agnostic
+          const sIcon = d[`icon.service.${s.key}`]?.valueEn ?? s.icon;
           const sImage = d[`image.service.${s.key}`]?.valueEn ?? s.image;
           return { ...s, title: sTitle, desc: sDesc, icon: sIcon || s.icon, image: sImage };
         }));
@@ -47,27 +46,11 @@ export const ServicesContent: React.FC<ServicesContentProps> = ({ title, body, s
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
   }, [initialServices]);
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.15, delayChildren: 0.2 },
-    },
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 30 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <motion.div
-        initial={{ opacity: 0, y: 32 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-160px' }}
-        transition={{ duration: 0.9, ease: "easeOut" }}
-        className="flex flex-col text-center md:flex-row md:items-end md:justify-between md:text-left gap-6"
+      <div
+        className="reveal-on-scroll flex flex-col text-center md:flex-row md:items-end md:justify-between md:text-left gap-6"
       >
         <div className="max-w-2xl">
           <div className="mb-3 inline-block rounded-full bg-primary/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary sm:mb-4 sm:px-4 sm:text-sm" data-edit-key="services.badge">
@@ -80,18 +63,10 @@ export const ServicesContent: React.FC<ServicesContentProps> = ({ title, body, s
             {liveBody}
           </p>
         </div>
-      </motion.div>
+      </div>
 
-      <motion.div
-        variants={container}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: '-150px' }}
-        className="mt-12 grid gap-5 sm:mt-16 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3"
-      >
+      <div className="mt-12 grid gap-5 sm:mt-16 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
         {liveServices.map((service, index) => {
-          // Dynamic Lucide icon component mapping
-          // Support for exact match (e.g. 'Home') or our legacy mappings
           const LegacyMapping: Record<string, string> = {
             home: 'Home',
             building: 'Building2',
@@ -104,11 +79,9 @@ export const ServicesContent: React.FC<ServicesContentProps> = ({ title, body, s
           const IconComponent = (LucideIcons as any)[resolvedName] || LucideIcons.Home;
 
           return (
-          <motion.article
+          <article
             key={service.key}
-            variants={item}
-            whileHover={{ y: -6 }}
-            className={`group relative overflow-hidden rounded-2xl border border-gray-100/80 bg-surface shadow-lg transition-all duration-500 hover:shadow-[0_20px_40px_rgba(227,30,47,0.1)] sm:rounded-3xl ${
+            className={`reveal-on-scroll reveal-delay-${index + 1} group relative overflow-hidden rounded-2xl border border-gray-100/80 bg-surface shadow-lg transition-all duration-300 hover:shadow-[0_20px_40px_rgba(227,30,47,0.1)] hover:-translate-y-2 sm:rounded-3xl ${
               index === 1 ? 'lg:-translate-y-8' : ''
             }`}
           >
@@ -153,9 +126,9 @@ export const ServicesContent: React.FC<ServicesContentProps> = ({ title, body, s
             </div>
             
             <div className="absolute bottom-0 left-0 h-1.5 w-0 bg-gradient-to-r from-primary via-accent to-primary transition-all duration-500 ease-in-out group-hover:w-full" />
-          </motion.article>
+          </article>
         )})}
-      </motion.div>
+      </div>
     </div>
   );
 };

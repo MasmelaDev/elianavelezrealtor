@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 import * as LucideIcons from 'lucide-react';
 
 interface WhyItem {
@@ -20,29 +19,6 @@ export const WhyChooseContent: React.FC<WhyChooseContentProps> = ({
   subtitle,
   items,
 }) => {
-  const container = {
-    hidden: { opacity: 0, y: 32 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.9,
-        ease: [0.22, 1, 0.36, 1] as const,
-        staggerChildren: 0.16,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 28 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.85, ease: [0.22, 1, 0.36, 1] as const },
-    },
-  };
-
   const [liveIcons, setLiveIcons] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -70,50 +46,36 @@ export const WhyChooseContent: React.FC<WhyChooseContentProps> = ({
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       {/* Header */}
-      <motion.header
-        className="mx-auto max-w-2xl text-center flex flex-col items-center"
-        variants={container}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.7 }}
-      >
-        <motion.img
+      <header className="mx-auto max-w-2xl text-center flex flex-col items-center">
+        <img
           src="/images/realstate.png"
           alt=""
-          className="mb-6 h-16 w-auto opacity-90 drop-shadow-sm sm:h-20"
+          className="reveal-on-scroll mb-6 h-16 w-auto opacity-90 drop-shadow-sm sm:h-20"
           aria-hidden="true"
-          variants={item}
         />
-        <motion.h2
-          className="font-serif text-3xl font-semibold text-on-surface sm:text-4xl md:text-4xl"
+        <h2
+          className="reveal-on-scroll reveal-delay-1 font-serif text-3xl font-semibold text-on-surface sm:text-4xl md:text-4xl"
           data-edit-key="why.title"
-          variants={item}
         >
           {title}
-        </motion.h2>
-        <motion.p
-          className="mt-4 text-base leading-relaxed text-on-surface-muted sm:text-lg"
+        </h2>
+        <p
+          className="reveal-on-scroll reveal-delay-2 mt-4 text-base leading-relaxed text-on-surface-muted sm:text-lg"
           data-edit-key="why.subtitle"
-          variants={item}
         >
           {subtitle}
-        </motion.p>
-      </motion.header>
+        </p>
+      </header>
 
       {/* Items */}
-      <motion.ul
+      <ul
         className="mt-12 grid gap-8 sm:mt-16 sm:grid-cols-2 sm:gap-10 lg:mt-20 lg:grid-cols-3 lg:gap-12"
         role="list"
-        variants={container}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.6 }}
       >
-        {items.map(({ key, icon, title: itemTitle, desc }) => (
-          <motion.li
+        {items.map(({ key, icon, title: itemTitle, desc }, idx) => (
+          <li
             key={key}
-            variants={item}
-            className="relative rounded-2xl border border-primary/10 bg-surface p-6 shadow-md transition-all duration-300 hover:shadow-xl hover:border-accent/30 sm:p-8"
+            className={`reveal-on-scroll reveal-delay-${idx + 1} relative rounded-2xl border border-primary/10 bg-surface p-6 shadow-md transition-all duration-300 hover:shadow-xl hover:border-accent/30 sm:p-8`}
           >
             <div className="flex flex-col sm:flex-row sm:items-start sm:gap-4">
               <span
@@ -138,10 +100,9 @@ export const WhyChooseContent: React.FC<WhyChooseContentProps> = ({
                 </p>
               </div>
             </div>
-          </motion.li>
+          </li>
         ))}
-      </motion.ul>
+      </ul>
     </div>
   );
 };
-

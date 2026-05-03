@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 
 interface AboutContentProps {
   title: string;
@@ -27,13 +26,7 @@ export const AboutContent: React.FC<AboutContentProps> = ({
       <div className="grid items-center gap-10 sm:gap-12 lg:grid-cols-2 lg:gap-16">
         
         {/* Image Side - first on mobile */}
-        <motion.div
-          initial={{ opacity: 0, x: -40 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: '-150px' }}
-          transition={{ duration: 0.9, ease: 'easeOut' }}
-          className="relative mx-auto w-full max-w-md sm:max-w-lg lg:mx-0"
-        >
+        <div className="reveal-fade-left relative mx-auto w-full max-w-md sm:max-w-lg lg:mx-0">
           {/* Decorative Backdrops */}
           <div className="absolute -inset-4 bg-gradient-to-tr from-primary/20 to-accent/20 rounded-[2.5rem] transform rotate-3 scale-105 pointer-events-none" />
           <div className="absolute -inset-4 bg-surface-gray/50 rounded-[2.5rem] transform -rotate-2 scale-105 pointer-events-none" />
@@ -59,13 +52,7 @@ export const AboutContent: React.FC<AboutContentProps> = ({
           </div>
           
           {/* Decorative Badge */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-            className="absolute -right-6 -bottom-6 lg:-right-10 lg:bottom-10 glass rounded-2xl p-4 flex items-center gap-4 shadow-2xl z-20 animate-float"
-          >
+          <div className="reveal-scale reveal-delay-3 absolute -right-6 -bottom-6 lg:-right-10 lg:bottom-10 glass rounded-2xl p-4 flex items-center gap-4 shadow-2xl z-20 animate-float">
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary-dark text-white shadow-lg">
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -75,17 +62,11 @@ export const AboutContent: React.FC<AboutContentProps> = ({
               <p className="font-bold text-lg text-on-surface" data-edit-key="about.badgeFloatingTitle">{badgeFloatingTitle}</p>
               <p className="text-sm font-semibold text-primary uppercase tracking-wider" data-edit-key="about.badgeFloatingDesc">{badgeFloatingDesc}</p>
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
         {/* Text Side */}
-        <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: '-160px' }}
-          transition={{ duration: 0.9, ease: 'easeOut', delay: 0.25 }}
-          className="lg:pl-8"
-        >
+        <div className="reveal-fade-right lg:pl-8">
           <div className="mb-4 inline-block rounded-full bg-accent/10 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-accent border border-accent/20 sm:mb-6 sm:px-4 sm:py-2 sm:text-sm" data-edit-key="about.badge">
             {badgeText}
           </div>
@@ -114,7 +95,7 @@ export const AboutContent: React.FC<AboutContentProps> = ({
               <span data-edit-key="about.happyClients" className="text-sm font-semibold text-on-surface-muted">{happyClientsText}</span>
             </div>
           </div>
-        </motion.div>
+        </div>
 
       </div>
     </div>

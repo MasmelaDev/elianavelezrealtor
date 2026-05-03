@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 
 interface Post {
   slug: string;
@@ -24,24 +23,11 @@ export const BlogContent: React.FC<BlogContentProps> = ({
   viewAllHref,
   posts,
 }) => {
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.16 },
-    },
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 30 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.8 } },
-  };
-
   return (
     <section className="bg-surface-gray py-24 md:py-32" id="blog">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-          <div>
+          <div className="reveal-on-scroll">
             <div className="mb-4 inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-widest text-primary">
               Real Estate Insights
             </div>
@@ -52,7 +38,7 @@ export const BlogContent: React.FC<BlogContentProps> = ({
           {posts.length > 0 && (
             <a
               href={viewAllHref}
-              className="inline-flex items-center justify-center rounded-lg border-2 border-primary px-6 py-3 font-semibold text-primary transition-all duration-300 hover:bg-primary-dark hover:text-white hover:border-primary-dark hover:shadow-sm"
+              className="reveal-on-scroll reveal-delay-1 inline-flex items-center justify-center rounded-lg border-2 border-primary px-6 py-3 font-semibold text-primary transition-all duration-300 hover:bg-primary-dark hover:text-white hover:border-primary-dark hover:shadow-sm"
             >
               {viewAllText}
             </a>
@@ -70,20 +56,12 @@ export const BlogContent: React.FC<BlogContentProps> = ({
             </a>
           </div>
         ) : (
-          <motion.div
-            variants={container}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: '-150px' }}
-            className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3"
-          >
-            {posts.slice(0, 3).map((p) => (
-              <motion.a
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {posts.slice(0, 3).map((p, idx) => (
+              <a
                 key={p.slug}
-                variants={item}
-                whileHover={{ y: -6 }}
                 href={p.href}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-surface shadow-md transition-all duration-500 hover:shadow-2xl"
+                className={`reveal-on-scroll reveal-delay-${idx + 1} group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-surface shadow-md transition-all duration-300 hover:shadow-2xl hover:-translate-y-2`}
               >
                 <div className="relative h-56 overflow-hidden bg-gray-100">
                   {p.coverImage ? (
@@ -116,9 +94,9 @@ export const BlogContent: React.FC<BlogContentProps> = ({
                     </svg>
                   </div>
                 </div>
-              </motion.a>
+              </a>
             ))}
-          </motion.div>
+          </div>
         )}
       </div>
     </section>

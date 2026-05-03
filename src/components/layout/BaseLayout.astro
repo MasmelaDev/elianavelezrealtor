@@ -32,5 +32,34 @@ const canonical = new URL(Astro.url.pathname, import.meta.env.PUBLIC_SITE_URL ||
   </head>
   <body class="bg-surface text-on-surface">
     <slot />
+    <script>
+      // ── Reveal on Scroll — single IntersectionObserver for all elements ──
+      ;(function () {
+        const SELECTORS = '.reveal-on-scroll, .reveal-fade-down, .reveal-fade-left, .reveal-fade-right, .reveal-scale'
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible')
+                observer.unobserve(entry.target) // animate once
+              }
+            })
+          },
+          { threshold: 0.15, rootMargin: '0px 0px -60px 0px' }
+        )
+        function observe() {
+          document.querySelectorAll(SELECTORS).forEach((el) => {
+            if (!el.classList.contains('is-visible')) observer.observe(el)
+          })
+        }
+        // Initial pass
+        observe()
+        // Re-observe after Astro page transitions or React hydration
+        document.addEventListener('astro:page-load', observe)
+        // Fallback: MutationObserver for dynamically added elements
+        const mo = new MutationObserver(() => observe())
+        mo.observe(document.body, { childList: true, subtree: true })
+      })()
+    </script>
   </body>
 </html>

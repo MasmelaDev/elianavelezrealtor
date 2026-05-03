@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 
 interface HeroContentProps {
   tagline: string;
@@ -22,42 +21,13 @@ export const HeroContent: React.FC<HeroContentProps> = ({
   primaryHref,
   secondaryHref,
 }) => {
-  const containerVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.9,
-        ease: [0.22, 1, 0.36, 1] as const,
-        staggerChildren: 0.14,
-        delayChildren: 0.25,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 24 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] as const },
-    },
-  };
-
   return (
     <div className="relative z-10 flex w-full flex-col justify-center py-28 sm:py-32 lg:py-0">
-      <motion.div
-        className="flex w-full max-w-2xl flex-col"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
+      <div className="flex w-full max-w-2xl flex-col">
         {/* Tagline Badge */}
-        <motion.p
-          variants={itemVariants}
+        <p
           data-edit-key="hero.tagline"
-          className="mb-6 inline-flex w-fit items-center gap-2.5 rounded-full border border-white/20 bg-white/10 py-2 pl-3 pr-5 text-xs font-semibold uppercase tracking-[0.2em] text-white/90 backdrop-blur-sm sm:text-sm"
+          className="reveal-on-scroll mb-6 inline-flex w-fit items-center gap-2.5 rounded-full border border-white/20 bg-white/10 py-2 pl-3 pr-5 text-xs font-semibold uppercase tracking-[0.2em] text-white/90 backdrop-blur-sm sm:text-sm"
         >
           <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent text-white">
             <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -65,10 +35,10 @@ export const HeroContent: React.FC<HeroContentProps> = ({
             </svg>
           </span>
           {tagline}
-        </motion.p>
+        </p>
 
         {/* Name & Title */}
-        <motion.div variants={itemVariants}>
+        <div className="reveal-on-scroll reveal-delay-1">
           <h1 data-edit-key="hero.title" className="font-serif text-5xl font-black leading-[1.05] tracking-tight text-white drop-shadow-lg sm:text-6xl md:text-7xl lg:text-[5rem] xl:text-[5.5rem]">
             {title}
           </h1>
@@ -79,22 +49,18 @@ export const HeroContent: React.FC<HeroContentProps> = ({
             </span>
             <div className="h-[2px] w-10 bg-accent sm:w-14" />
           </div>
-        </motion.div>
+        </div>
 
         {/* Subtitle */}
-        <motion.p
-          variants={itemVariants}
+        <p
           data-edit-key="hero.subtitle"
-          className="mt-6 max-w-lg text-base font-light leading-relaxed text-white/85 sm:mt-8 sm:text-lg md:text-xl"
+          className="reveal-on-scroll reveal-delay-2 mt-6 max-w-lg text-base font-light leading-relaxed text-white/85 sm:mt-8 sm:text-lg md:text-xl"
         >
           {subtitle}
-        </motion.p>
+        </p>
 
         {/* CTAs */}
-        <motion.div
-          variants={itemVariants}
-          className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:gap-4"
-        >
+        <div className="reveal-on-scroll reveal-delay-3 mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:gap-4">
           <a
             href={primaryHref}
             data-edit-key="hero.cta.primary"
@@ -114,8 +80,8 @@ export const HeroContent: React.FC<HeroContentProps> = ({
           >
             <span className="tracking-wide">{secondaryCta}</span>
           </a>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </div>
   );
 };

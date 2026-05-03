@@ -100,7 +100,7 @@ const propsList = await db.select({
   lng: properties.lng
 }).from(properties).where(eq(properties.status, 'sold'))
 ---
-<BaseLayout title="Home" description={heroSubtitle} lang="en">
+<BaseLayout title="Eliana Velez Realtor" description={heroSubtitle} lang="en">
   <PublicLayout lang="en" t={t} transparentNav={true} editorMode={Astro.url.searchParams.get('editor') === 'true'}>
     <HeroSection
       lang="en"
