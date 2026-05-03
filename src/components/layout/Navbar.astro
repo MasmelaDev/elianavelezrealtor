@@ -40,31 +40,67 @@ const btnClasses = transparentNav ? 'text-white' : 'text-on-surface'
       </a>
     </div>
 
-    <button type="button" class={`flex h-10 w-10 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg md:hidden ${btnClasses}`} id="nav-toggle" aria-label={t('nav.menuOpen')} aria-expanded="false" data-menu-open-label={t('nav.menuOpen')} data-menu-close-label={t('nav.menuClose')}>
-      <svg class="h-6 w-6 nav-icon-open" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+    <button type="button" class={`relative z-[100] flex h-10 w-10 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg md:hidden ${btnClasses}`} id="nav-toggle" aria-label={t('nav.menuOpen')} aria-expanded="false" data-menu-open-label={t('nav.menuOpen')} data-menu-close-label={t('nav.menuClose')}>
+      <svg class="h-6 w-6 nav-icon-open transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
       </svg>
-      <svg class="h-6 w-6 nav-icon-close hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+      <svg class="h-6 w-6 nav-icon-close hidden transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
       </svg>
     </button>
   </nav>
 
-  <div class="fixed inset-0 z-40 hidden bg-surface pt-24 pb-8 md:hidden" id="nav-drawer" aria-hidden="true">
-    <nav class="flex flex-col gap-1 px-4 py-6" aria-label="Menú principal">
-      <a href={getLocalizedPath('/properties', lang)} class="min-h-[48px] rounded-lg px-4 py-3 font-serif text-lg font-medium text-on-surface hover:bg-surface-muted">{t('nav.properties')}</a>
-      <a href={getLocalizedPath('/blog', lang)} class="min-h-[48px] rounded-lg px-4 py-3 font-serif text-lg font-medium text-on-surface hover:bg-surface-muted">{t('nav.blog')}</a>
-      <a href={`${homePath}#contact`} class="min-h-[48px] rounded-lg px-4 py-3 font-serif text-lg font-medium text-on-surface hover:bg-surface-muted">{t('nav.contact')}</a>
+  <!-- Mobile Drawer -->
+  <div 
+    class="fixed inset-0 z-[90] flex h-screen w-screen translate-x-full flex-col bg-white transition-transform duration-300 ease-in-out md:hidden" 
+    id="nav-drawer" 
+    aria-hidden="true"
+  >
+    <!-- Drawer Header -->
+    <div class="flex h-14 min-h-[56px] items-center justify-between px-4 border-b border-gray-100 bg-white">
+      <span class="font-serif text-lg font-semibold text-primary">Menú</span>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto px-4 py-8 flex flex-col gap-2 bg-white" aria-label="Menú principal">
+      <a href={getLocalizedPath('/properties', lang)} class="flex items-center gap-4 rounded-xl px-4 py-4 font-serif text-xl font-medium text-on-surface transition-colors active:bg-surface-muted hover:bg-surface-muted">
+        <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/5 text-primary">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+        </span>
+        {t('nav.properties')}
+      </a>
+      <a href={getLocalizedPath('/blog', lang)} class="flex items-center gap-4 rounded-xl px-4 py-4 font-serif text-xl font-medium text-on-surface transition-colors active:bg-surface-muted hover:bg-surface-muted">
+        <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/5 text-primary">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
+        </span>
+        {t('nav.blog')}
+      </a>
+      <a href={`${homePath}#contact`} class="flex items-center gap-4 rounded-xl px-4 py-4 font-serif text-xl font-medium text-on-surface transition-colors active:bg-surface-muted hover:bg-surface-muted">
+        <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/5 text-primary">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+        </span>
+        {t('nav.contact')}
+      </a>
       
-      <div class="mt-2 border-t border-gray-100 pt-4">
-        <a href={getLocalizedPath('/', otherLang)} class="flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-surface-muted px-4 py-3 font-serif text-lg font-medium text-on-surface transition-colors hover:bg-gray-200">
-          <svg class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
-          </svg>
-          {otherLang === 'es' ? 'Ver sitio en Español' : 'View site in English'}
+      <div class="mt-8 border-t border-gray-100 pt-8">
+        <p class="mb-4 px-4 text-xs font-bold uppercase tracking-widest text-on-surface-muted">Idioma / Language</p>
+        <a href={getLocalizedPath('/', otherLang)} class="flex items-center justify-between rounded-xl bg-gray-50 px-5 py-4 transition-colors hover:bg-gray-100">
+          <div class="flex items-center gap-3">
+            <svg class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+            </svg>
+            <span class="font-serif text-lg font-medium text-on-surface">
+              {otherLang === 'es' ? 'Español' : 'English'}
+            </span>
+          </div>
+          <span class="rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-bold text-primary uppercase">Cambiar</span>
         </a>
       </div>
     </nav>
+
+    <!-- Drawer Footer -->
+    <div class="p-6 border-t border-gray-50 bg-white">
+      <p class="text-center text-[10px] uppercase tracking-[0.2em] text-on-surface-muted">Eliana Velez REALTOR®</p>
+    </div>
   </div>
 </header>
 
@@ -74,27 +110,66 @@ const btnClasses = transparentNav ? 'text-white' : 'text-on-surface'
     const drawer = document.getElementById('nav-drawer')
     const openIcon = document.querySelector('.nav-icon-open')
     const closeIcon = document.querySelector('.nav-icon-close')
+    const navbar = document.getElementById('navbar')
+    
     if (!toggle || !drawer) return
 
+    let isOpen = false
+
     toggle.addEventListener('click', () => {
-      const open = drawer.classList.toggle('hidden')
+      isOpen = !isOpen
+      
+      // Toggle drawer visibility with slide effect
+      drawer.classList.toggle('translate-x-full', !isOpen)
+      
+      // Update toggle attributes
       const openLabel = toggle.getAttribute('data-menu-open-label') || 'Open menu'
       const closeLabel = toggle.getAttribute('data-menu-close-label') || 'Close menu'
-      toggle.setAttribute('aria-expanded', String(!open))
-      toggle.setAttribute('aria-label', open ? openLabel : closeLabel)
-      if (openIcon) openIcon.classList.toggle('hidden', !open)
-      if (closeIcon) closeIcon.classList.toggle('hidden', open)
-      document.body.style.overflow = open ? '' : 'hidden'
+      toggle.setAttribute('aria-expanded', String(isOpen))
+      toggle.setAttribute('aria-label', isOpen ? closeLabel : openLabel)
+      
+      // Toggle icons
+      if (openIcon) openIcon.classList.toggle('hidden', isOpen)
+      if (closeIcon) closeIcon.classList.toggle('hidden', !isOpen)
+      
+      // Prevent scrolling when menu is open
+      document.body.style.overflow = isOpen ? 'hidden' : ''
+
+      // If navbar is transparent, make it solid when menu is open
+      if (navbar?.getAttribute('data-transparent') === 'true') {
+        if (isOpen) {
+          navbar.classList.remove('bg-surface-dark/40', 'backdrop-blur-md')
+          navbar.classList.add('bg-white')
+          toggle.classList.remove('text-white')
+          toggle.classList.add('text-on-surface')
+        } else {
+          // Only revert if we are at the top
+          if (window.scrollY < 20) {
+            navbar.classList.add('bg-surface-dark/40', 'backdrop-blur-md')
+            navbar.classList.remove('bg-white')
+            toggle.classList.add('text-white')
+            toggle.classList.remove('text-on-surface')
+          }
+        }
+      }
     })
 
+    // Close on link click
     drawer.querySelectorAll('a').forEach((link) => {
       link.addEventListener('click', () => {
-        drawer.classList.add('hidden')
+        isOpen = false
+        drawer.classList.add('translate-x-full')
         toggle?.setAttribute('aria-expanded', 'false')
-        toggle?.setAttribute('aria-label', 'Open menu')
         if (openIcon) openIcon.classList.remove('hidden')
         if (closeIcon) closeIcon.classList.add('hidden')
         document.body.style.overflow = ''
+        
+        if (navbar?.getAttribute('data-transparent') === 'true' && window.scrollY < 20) {
+          navbar.classList.add('bg-surface-dark/40', 'backdrop-blur-md')
+          navbar.classList.remove('bg-white')
+          toggle?.classList.add('text-white')
+          toggle?.classList.remove('text-on-surface')
+        }
       })
     })
   })()
@@ -107,5 +182,8 @@ const btnClasses = transparentNav ? 'text-white' : 'text-on-surface'
       logo.style.display = 'none'
       document.querySelector('.navbar-brand-fallback')?.classList.remove('hidden')
     })
+  }
+</script>
+
   }
 </script>

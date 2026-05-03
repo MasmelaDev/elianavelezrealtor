@@ -39,7 +39,10 @@ export default function ContactForm({
     const data = await res.json().catch(() => ({}))
     setSending(false)
     if (!res.ok) {
-      setError(typeof data.error === 'object' ? (lang === 'es' ? 'Error al enviar' : 'Failed to send') : data.error ?? t('form.error'))
+      const errorMsg = data.details 
+        ? `${data.error}: ${data.details}` 
+        : (typeof data.error === 'object' ? (lang === 'es' ? 'Datos inválidos' : 'Invalid data') : data.error ?? t('form.error'))
+      setError(errorMsg)
       return
     }
     setSuccess(true)

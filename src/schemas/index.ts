@@ -2,9 +2,9 @@ import { z } from 'zod'
 
 export const LeadSchema = z.object({
   name: z.string().min(2).max(100),
-  email: z.string().email(),
-  phone: z.string().optional(),
-  message: z.string().max(1000).optional(),
+  email: z.string().email().max(150),
+  phone: z.string().max(20).optional().or(z.literal('')),
+  message: z.string().max(1000).optional().or(z.literal('')),
   source: z.enum(['contact', 'property', 'appointment']),
   propertyId: z.string().uuid().optional(),
 })

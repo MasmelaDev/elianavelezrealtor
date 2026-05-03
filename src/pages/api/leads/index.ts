@@ -52,7 +52,8 @@ export const POST: APIRoute = async ({ request }) => {
       // log but don't fail the request
     }
     return Response.json(created, { status: 201 })
-  } catch {
-    return Response.json({ error: 'Internal server error' }, { status: 500 })
+  } catch (err: any) {
+    console.error('Lead submission error:', err)
+    return Response.json({ error: 'Internal server error', details: err.message }, { status: 500 })
   }
 }
